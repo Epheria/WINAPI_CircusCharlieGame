@@ -55,6 +55,7 @@ public:
 	}
 	BitMap* GetImage(IMAGE index)
 	{
+		auto temp = m_parrBitMap[index];
 		return m_parrBitMap[index];
 	}
 	BitMapManager();

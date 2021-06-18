@@ -41,13 +41,22 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         return FALSE;
     }
 
+    MoveWindow(g_hWnd, 0, 0, 1200, 700, true);
     HDC hdc = GetDC(g_hWnd);
+    BitMapManager::GetInstance()->Init(g_hWnd);
     GameManager::GetInstance()->InitPlayer(g_hWnd);
+    GameManager::GetInstance()->InitMap(g_hWnd);
 
+
+    MOVE_STATUS tmp = MOVE_IDLE;
+    int x = 0;
     MSG msg;
     ZeroMemory(&msg, sizeof(msg));
 
     LONGLONG checkTime, limitTime = GetTickCount64();
+    float time = 0;
+    int iCheck = 1;
+    GameManager::GetInstance()->DrawMap(hdc);
 
     // 게임 루프.
     while (WM_QUIT != msg.message)
@@ -68,20 +77,44 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
                 if (GetAsyncKeyState(VK_RIGHT))
                 {
-                    x += 100 * deltaTime;
+                    x = 100 * deltaTime;
+                    iCheck = 1;
+                    GameManager::GetInstance()->GetPlayer()->UpdatePosX(x);
                 }
-                if (GetAsyncKeyState(VK_LEFT))
+                else if (GetAsyncKeyState(VK_LEFT))
                 {
-                    x -= 100 * deltaTime;
+                    x = 100 * deltaTime;
+                    iCheck = -1;
+                    GameManager::GetInstance()->GetPlayer()->UpdatePosX(-x);
                 }
+                else
+                    iCheck = 0;
+
+                time += deltaTime;
+                if (0.3f <= time)
+                {
+                    time = 0;
+                    switch (tmp)
+                    {
+                    case MOVE_IDLE:
+                        if (iCheck == 1) tmp = MOVE_FRONT;
+                        else if (iCheck == -1) tmp = MOVE_BACK;
+                        else
+                            tmp = MOVE_IDLE;
+                        break;
+                    default:
+                        tmp = MOVE_IDLE;
+                    }
+                }
+                GameManager::GetInstance()->GetPlayer()->UpdateStatus(tmp);
 
                 DoubleBuffer(g_hWnd, hdc);
             }
         }
     }
 
-    DeleteObject();
-    DeleteObject();
+    //DeleteObject();
+    //DeleteObject();
     ReleaseDC(g_hWnd, hdc);
 
     return (int) msg.wParam;
@@ -177,12 +210,14 @@ void DoubleBuffer(HWND hWnd, HDC hdc)
     HBITMAP backBitmap = CreateDIBSectionRe(hdc, windowRect.right - windowRect.left, windowRect.bottom - windowRect.top);
     HBITMAP oldBack = (HBITMAP)SelectObject(backDC, backBitmap);
 
-    HDC memDC = CreateCompatibleDC(hdc);
-    HBITMAP oldBitmap = (HBITMAP)SelectObject(memDC, Player1);
-    TransparentBlt(backDC, 100 + x, 100, 66, 63, memDC, 0, 0, 66, 63, RGB(255, 0, 255));
-    SelectObject(memDC, oldBitmap);
+    //HDC memDC = CreateCompatibleDC(hdc);
+    //HBITMAP oldBitmap = (HBITMAP)SelectObject(memDC, GameManager::GetInstance()->GetPlayer()->GetPlayerImage(Index));
+    //TransparentBlt(backDC, 100 + GameManager::GetInstance()->GetPlayer()->GetPosX(), 100, 66, 63, memDC, 0, 0, 66, 63, RGB(255, 0, 255));
+    //SelectObject(memDC, oldBitmap);
 
-    DeleteDC(memDC);
+    GameManager::GetInstance()->GetPlayer()->Draw(backDC);
+
+    //DeleteDC(memDC);
     BitBlt(hdc, 0, 0, windowRect.right - windowRect.left, windowRect.bottom - windowRect.top, backDC, 0, 0, SRCCOPY);
     SelectObject(backDC, oldBack);
     DeleteObject(backBitmap);

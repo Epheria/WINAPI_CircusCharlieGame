@@ -18,7 +18,7 @@ void BitMap::Init(HDC hdc,char* FileName)
 }
 void BitMap::Draw(HDC hdc, int x, int y)
 {
-	TransparentBlt(hdc, 100 + x, 100, m_Size.cx, m_Size.cy, MemDC, 0, 0, m_Size.cx, m_Size.cy, RGB(255, 0, 255));
+	TransparentBlt(hdc, x, y, m_Size.cx, m_Size.cy, MemDC, 0, 0, m_Size.cx, m_Size.cy, RGB(255, 0, 255));
 }
 void BitMap::DrawBackGround(HDC hdc, int x, int y)
 {

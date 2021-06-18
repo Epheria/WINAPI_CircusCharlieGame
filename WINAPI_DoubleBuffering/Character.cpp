@@ -14,8 +14,8 @@ void Character::Init(int x, int y)
 	m_iy = y;
 	m_BitMapRect.left = x;
 	m_BitMapRect.top = y;
-	m_BitMapRect.right = m_BitMapRect.left + m_pBitMap[IMAGE_PLAYER_1]->GetSize().cx;
-	m_BitMapRect.right = m_BitMapRect.top + m_pBitMap[IMAGE_PLAYER_1]->GetSize().cy;
+	m_BitMapRect.right = m_BitMapRect.left + m_pBitMap[MOVE_IDLE]->GetSize().cx;
+	m_BitMapRect.bottom = m_BitMapRect.top + m_pBitMap[MOVE_IDLE]->GetSize().cy;
 }
 
 void Character::Draw(HDC hdc)
