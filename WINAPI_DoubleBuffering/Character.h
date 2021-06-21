@@ -7,6 +7,7 @@ enum MOVE_STATUS
 	MOVE_FRONT,
 	MOVE_IDLE,
 	MOVE_BACK,
+	MOVE_DIE,
 	MOVE_END
 };
 
@@ -24,17 +25,25 @@ public:
 	{
 		return m_pBitMap[Index];
 	}
-	void UpdatePosX(int x)
+	void UpdatePosx(int x)
 	{
 		m_ix += x;
+	}
+	void UpdatePosy(int y)
+	{
+		m_iy += y;
 	}
 	void UpdateStatus(MOVE_STATUS Index)
 	{
 		m_eCharacterState = Index;
 	}
-	int GetPosX()
+	int GetPosx()
 	{
 		return m_ix;
+	}
+	int GetPosy()
+	{
+		return m_iy;
 	}
 	void Init(int x, int y);
 	void Draw(HDC hdc);

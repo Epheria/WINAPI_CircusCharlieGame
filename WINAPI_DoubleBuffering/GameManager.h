@@ -6,13 +6,19 @@
 #include "Character.h"
 #include "Map.h"
 
+enum MAPSIZE
+{
+	SIZE_MAPX = 1100,
+	SIZE_MAPY = 700,
+	SIZE_BACKX = 65,
+	SIZE_BACKY = 66
+};
+
 class GameManager
 {
 private:
 	Character* m_Player;
 	Map* m_BackGround;
-	std::vector<Map*> m_BackGroundList;
-	std::vector<Map*> m_TrackList;
 	static GameManager* m_hThis;
 public:
 	static GameManager* GetInstance()
@@ -21,9 +27,9 @@ public:
 			m_hThis = new GameManager;
 		return m_hThis;
 	}
+	void Update(LONGLONG checkTime, LONGLONG limitTime);
 	void InitPlayer(HWND hWnd);
 	void InitMap(HWND hWnd);
-	void DrawMap(HDC hdc);
 	//void DrawPlayer(HWND hWnd, HDC hdc)
 	//{
 	//	m_Player->Draw(hdc, Index);

@@ -16,6 +16,7 @@ class Map
 private:
 	BACKGROUND m_eMapState;
 	BitMap* m_pBitMap[BACKGROUND_END];
+	int m_imoveLen;
 	int m_ix;
 	int m_iy;
 	RECT m_BitMapRect;
@@ -29,8 +30,21 @@ public:
 	{
 		m_eMapState = Index;
 	}
+	int GetPosx()
+	{
+		return m_ix;
+	}
+	int GetMoveLenx()
+	{
+		return m_imoveLen;
+	}
+	void UpdateMoveLenx(int x)
+	{
+		m_imoveLen += x;
+	}
 	void Init(BACKGROUND Index, int x, int y);
 	void Draw(HDC hdc);
+	void MapDraw(HDC hdc);
 	~Map();
 };
 
