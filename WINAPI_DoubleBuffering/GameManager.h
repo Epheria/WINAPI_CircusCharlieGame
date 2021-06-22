@@ -1,4 +1,5 @@
 #pragma once
+#pragma warning(disable:4996)
 #include <Windows.h>
 #include <string>
 #include <time.h>
@@ -14,6 +15,13 @@ enum MAPSIZE
 	SIZE_BACKY = 66
 };
 
+enum DIRECTION
+{
+	DIR_RIGHT = 1,
+	DIR_IDLE = 0,
+	DIR_LEFT = -1
+};
+
 class GameManager
 {
 private:
@@ -27,7 +35,8 @@ public:
 			m_hThis = new GameManager;
 		return m_hThis;
 	}
-	void Update(LONGLONG checkTime, LONGLONG limitTime);
+	void Update(float deltaTime);
+	void Draw(HDC backDC, char buf[]);
 	void InitPlayer(HWND hWnd);
 	void InitMap(HWND hWnd);
 	//void DrawPlayer(HWND hWnd, HDC hdc)

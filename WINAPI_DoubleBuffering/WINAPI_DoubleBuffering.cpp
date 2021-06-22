@@ -48,7 +48,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     GameManager::GetInstance()->InitMap(g_hWnd);
 
 
-    MOVE_STATUS tmp = MOVE_IDLE;
     int x = 0, y = 0;
     MSG msg;
     ZeroMemory(&msg, sizeof(msg));
@@ -56,7 +55,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     LONGLONG checkTime, limitTime = GetTickCount64();
     float time = 0;
     int iCheck = 1, iJump = 0;
-    bool bSpace = false;
+    bool bSpace = false, bSuperJump[2] = { false, false };
     //GameManager::GetInstance()->DrawMap(hdc);
 
     // 게임 루프.
@@ -76,85 +75,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                 float deltaTime = (checkTime - limitTime) * 0.01f;
                 limitTime = checkTime + 10;
 
-
-                if (GetAsyncKeyState(VK_RIGHT) && bSpace == false)
-                {
-                    if (GetAsyncKeyState(VK_SPACE) & 0x8000)
-                    {
-                        bSpace = true;
-                        iJump = 1;
-                    }
-                    x = 100 * deltaTime;
-                    iCheck = 1;
-                    GameManager::GetInstance()->GetBackGround()->UpdateMoveLenx(x);
-                }
-                else if (GetAsyncKeyState(VK_LEFT) && bSpace == false)
-                {
-                    if (GameManager::GetInstance()->GetBackGround()->GetMoveLenx() <= 0)
-                        x = 0;
-                    else
-                        x = 100 * deltaTime;
-                    iCheck = -1;
-                    GameManager::GetInstance()->GetBackGround()->UpdateMoveLenx(-x);
-                }
-                
-                if (GetAsyncKeyState(VK_SPACE) & 0x8000)
-                {
-                    bSpace = true;
-                    iJump = 1;
-                }
-                /*else if (GetAsyncKeyState(VK_RIGHT) & 0x0001 && GetAsyncKeyState(VK_SPACE) & 0x8000)
-                {
-                    x = 100 * deltaTime;
-                    GameManager::GetInstance()->GetBackGround()->UpdateMoveLenx(x);
-                    bSpace = true;
-                    iJump = 1;
-
-                }*/
-                else
-                    iCheck = 0;
-
-                if (bSpace == true)
-                {
-                    y = 100 * deltaTime;
-                    if (iJump == 1 && GameManager::GetInstance()->GetPlayer()->GetPosy() <= 300)
-                    {
-                        GameManager::GetInstance()->GetPlayer()->UpdatePosy(-y);
-
-                        if (GameManager::GetInstance()->GetPlayer()->GetPosy() <= 180)
-                            iJump = -1;
-                    }
-                    if(iJump == -1 && GameManager::GetInstance()->GetPlayer()->GetPosy() >= 170)
-                    {
-                        GameManager::GetInstance()->GetPlayer() ->UpdatePosy(y);
-                        if (GameManager::GetInstance()->GetPlayer()->GetPosy() >= 285)
-                            iJump = 0;
-                    }
-
-                    if (iJump == 0)
-                    {
-                        bSpace = false;
-                    }
-                }
-
-                time += deltaTime;
-                if (0.3f <= time)
-                {
-                    time = 0;
-                    switch (tmp)
-                    {
-                    case MOVE_IDLE:
-                        if (iCheck == 1) tmp = MOVE_FRONT;
-                        else if (iCheck == -1) tmp = MOVE_BACK;
-                        else
-                            tmp = MOVE_IDLE;
-                        break;
-                    default:
-                        tmp = MOVE_IDLE;
-                    }
-                }
-                GameManager::GetInstance()->GetPlayer()->UpdateStatus(tmp);
-
+                GameManager::GetInstance()->Update(deltaTime);
                 DoubleBuffer(g_hWnd, hdc);
             }
         }
@@ -264,10 +185,7 @@ void DoubleBuffer(HWND hWnd, HDC hdc)
     //TransparentBlt(backDC, 100 + GameManager::GetInstance()->GetPlayer()->GetPosX(), 100, 66, 63, memDC, 0, 0, 66, 63, RGB(255, 0, 255));
     //SelectObject(memDC, oldBitmap);
 
-    GameManager::GetInstance()->GetBackGround()->MapDraw(backDC);
-    GameManager::GetInstance()->GetPlayer()->Draw(backDC);
-    sprintf_s(buf, "이동 거리 : %d", GameManager::GetInstance()->GetBackGround()->GetMoveLenx());
-    TextOutA(backDC, 100, 50, buf, strlen(buf));
+    GameManager::GetInstance()->Draw(backDC, buf);
     //DeleteDC(memDC);
     BitBlt(hdc, 0, 0, windowRect.right - windowRect.left, windowRect.bottom - windowRect.top, backDC, 0, 0, SRCCOPY);
     SelectObject(backDC, oldBack);

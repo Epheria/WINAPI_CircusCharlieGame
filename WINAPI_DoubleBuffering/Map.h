@@ -19,6 +19,7 @@ private:
 	int m_imoveLen;
 	int m_ix;
 	int m_iy;
+	bool m_bControl;
 	RECT m_BitMapRect;
 public:
 	Map();
@@ -30,9 +31,13 @@ public:
 	{
 		m_eMapState = Index;
 	}
-	int GetPosx()
+	void UpdateControlState(bool flag)
 	{
-		return m_ix;
+		m_bControl = flag;
+	}
+	bool GetControlState()
+	{
+		return m_bControl;
 	}
 	int GetMoveLenx()
 	{

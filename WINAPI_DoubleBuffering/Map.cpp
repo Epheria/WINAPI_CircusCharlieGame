@@ -6,6 +6,7 @@ Map::Map()
 	m_imoveLen = 0;
 	m_ix = 0;
 	m_eMapState = BACKGROUND_TRACK;
+	m_bControl = true;
 }
 
 void Map::Init(BACKGROUND Index, int x, int y)
