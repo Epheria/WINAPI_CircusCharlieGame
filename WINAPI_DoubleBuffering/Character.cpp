@@ -3,11 +3,12 @@
 Character::Character()
 {
     m_iJumpDirection = 0;
-    m_iDirection = 0;
-    m_iTime = 0;
+    m_eDirection = DIRECTION::DIR_IDLE;
+    m_fTime = 0;
 	m_eCharacterState = MOVE_IDLE;
 	m_bControl = false;
     m_bIsJump = false;
+    m_iSjump = 0;
 }
 
 void Character::Init(int x, int y)
@@ -34,7 +35,7 @@ bool Character::ColliderCheck(POINT point)
 	return true;
 }
 
-void Character::PlayerUpdate(float deltaTime)
+void Character::PlayerUpdate(float deltaTime, int iCheck)
 {
     int x, y;
 
@@ -74,21 +75,21 @@ void Character::PlayerUpdate(float deltaTime)
 
         if (m_iJumpDirection == 0)
         {
+            m_iSjump = 0;
             m_bIsJump = false;
-            m_iDirection = 0; // super jump 가 false 였음 나중에 확인
+           //m_iDirection = 0; // super jump 가 false 였음 나중에 확인
         }
     }
 
-    m_iTime += deltaTime;
-    if (0.3f <= m_iTime)
+    m_fTime += deltaTime;
+    if (0.3f <= m_fTime)
     {
-        m_iTime = 0;
+        m_fTime = 0;
         switch (m_eCharacterState)
         {
         case MOVE_IDLE:
-            if (m_iDirection == 1)
-                m_eCharacterState = MOVE_FRONT;
-            else if (m_iDirection == -1) m_eCharacterState = MOVE_BACK;
+            if (iCheck == 1) m_eCharacterState = MOVE_FRONT;
+            else if (iCheck == -1) m_eCharacterState = MOVE_BACK;
             else
                 m_eCharacterState = MOVE_IDLE;
             break;

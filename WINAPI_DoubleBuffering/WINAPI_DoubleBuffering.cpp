@@ -18,7 +18,6 @@ ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
-void DoubleBuffer(HWND hWnd, HDC hdc);
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,
@@ -48,20 +47,16 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     GameManager::GetInstance()->InitMap(g_hWnd);
 
 
-    int x = 0, y = 0;
     MSG msg;
     ZeroMemory(&msg, sizeof(msg));
 
     LONGLONG checkTime, limitTime = GetTickCount64();
-    float time = 0;
-    int iCheck = 1, iJump = 0;
-    bool bSpace = false, bSuperJump[2] = { false, false };
+    int iCheck = 1, iSelect;
     //GameManager::GetInstance()->DrawMap(hdc);
-
     // 게임 루프.
+
     while (WM_QUIT != msg.message)
     {
-
         if (PeekMessage(&msg, NULL, 0U, 0U, PM_REMOVE))
         {
             TranslateMessage(&msg);
@@ -69,15 +64,29 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         }
         else
         {
-            checkTime = GetTickCount64();
-            if (limitTime <= checkTime)
+            iSelect = GameManager::GetInstance()->ShowMenu(g_hWnd, hdc);
+            while (iSelect != 2)
             {
-                float deltaTime = (checkTime - limitTime) * 0.01f;
-                limitTime = checkTime + 10;
 
-                GameManager::GetInstance()->Update(deltaTime);
-                DoubleBuffer(g_hWnd, hdc);
+                checkTime = GetTickCount64();
+                if (limitTime <= checkTime)
+                {
+                    float deltaTime = (checkTime - limitTime) * 0.01f;
+                    limitTime = checkTime + 20;
+
+                    switch (iSelect)
+                    {
+                    case 1:
+                        GameManager::GetInstance()->Update(deltaTime, iCheck);
+                        GameManager::GetInstance()->Draw(g_hWnd, hdc);
+                        break;
+                    case 2:
+                        iSelect = 2;
+                        break;
+                    }
+                }
             }
+
         }
     }
 
@@ -154,44 +163,6 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //  WM_DESTROY  - 종료 메시지를 게시하고 반환합니다.
 //
 //
-
-HBITMAP CreateDIBSectionRe(HDC hdc, int width, int height)
-{
-    BITMAPINFO bm_info;
-    ZeroMemory(&bm_info.bmiHeader, sizeof(BITMAPINFOHEADER));
-    bm_info.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-    bm_info.bmiHeader.biBitCount = 24;
-    bm_info.bmiHeader.biWidth = width;
-    bm_info.bmiHeader.biHeight = height;
-    bm_info.bmiHeader.biPlanes = 1;
-
-    LPVOID pBits;
-    return CreateDIBSection(hdc, &bm_info, DIB_RGB_COLORS, (void**)&pBits, NULL, 0);
-}
-
-void DoubleBuffer(HWND hWnd, HDC hdc)
-{
-    char buf[256];
-    ZeroMemory(buf, sizeof(buf));
-    RECT windowRect;
-    GetWindowRect(hWnd, &windowRect);
-
-    HDC backDC = CreateCompatibleDC(hdc);
-    HBITMAP backBitmap = CreateDIBSectionRe(hdc, windowRect.right - windowRect.left, windowRect.bottom - windowRect.top);
-    HBITMAP oldBack = (HBITMAP)SelectObject(backDC, backBitmap);
-
-    //HDC memDC = CreateCompatibleDC(hdc);
-    //HBITMAP oldBitmap = (HBITMAP)SelectObject(memDC, GameManager::GetInstance()->GetPlayer()->GetPlayerImage(Index));
-    //TransparentBlt(backDC, 100 + GameManager::GetInstance()->GetPlayer()->GetPosX(), 100, 66, 63, memDC, 0, 0, 66, 63, RGB(255, 0, 255));
-    //SelectObject(memDC, oldBitmap);
-
-    GameManager::GetInstance()->Draw(backDC, buf);
-    //DeleteDC(memDC);
-    BitBlt(hdc, 0, 0, windowRect.right - windowRect.left, windowRect.bottom - windowRect.top, backDC, 0, 0, SRCCOPY);
-    SelectObject(backDC, oldBack);
-    DeleteObject(backBitmap);
-    DeleteObject(backDC);
-}
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {

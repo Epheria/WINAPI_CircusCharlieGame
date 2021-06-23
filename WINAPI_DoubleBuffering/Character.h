@@ -11,17 +11,25 @@ enum MOVE_STATUS
 	MOVE_END
 };
 
+enum DIRECTION
+{
+	DIR_RIGHT = 1,
+	DIR_IDLE = 0,
+	DIR_LEFT = -1
+};
+
 class Character
 {
 private:
 	MOVE_STATUS m_eCharacterState;
 	BitMap* m_pBitMap[MOVE_END];
-	int m_iTime;
+	float m_fTime;
 	//int m_iCheckMoveStatus;
 	int m_ix;
 	int m_iy;
 	int m_iJumpDirection;
-	int m_iDirection;
+	DIRECTION m_eDirection;
+	int m_iSjump;
 	bool m_bIsJump;
 	bool m_bControl;
 	RECT m_BitMapRect;
@@ -35,9 +43,21 @@ public:
 	{
 		m_bControl = flag;
 	}
+	void UpdateCharStatus(MOVE_STATUS State)
+	{
+		m_eCharacterState = State;
+	}
 	bool GetControlState()
 	{
 		return m_bControl;
+	}
+	void UpdateSjump(int dir)
+	{
+		m_iSjump = dir;
+	}
+	int GetSjump()
+	{
+		return m_iSjump;
 	}
 	void UpdatePosx(int x)
 	{
@@ -66,21 +86,26 @@ public:
 	}
 	int GetDirection()
 	{
-		return m_iDirection;
+		return m_eDirection;
 	}
 	int GetDistx(float deltaTime)
 	{
-		return 100 * deltaTime;
+		switch (GetDirection())
+		{
+		case DIRECTION::DIR_LEFT: return -(100 * deltaTime);
+		case DIRECTION::DIR_RIGHT: return (100 * deltaTime);
+		default: return 0;
+		}
 	}
 	int GetDisty(float deltaTime)
 	{
 		return 80 * deltaTime;
 	}
-	void UpdateDirection(int iDirection)
+	void UpdateDirection(DIRECTION dir)
 	{
-		m_iDirection = iDirection;
+		m_eDirection = dir;
 	}
-	void PlayerUpdate(float deltaTime);
+	void PlayerUpdate(float deltaTime, int iCheck);
 	void Init(int x, int y);
 	void Draw(HDC hdc);
 	bool ColliderCheck(POINT point);

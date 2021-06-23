@@ -6,6 +6,7 @@
 #include <vector>
 #include "Character.h"
 #include "Map.h"
+#include "Menu.h"
 
 enum MAPSIZE
 {
@@ -15,18 +16,12 @@ enum MAPSIZE
 	SIZE_BACKY = 66
 };
 
-enum DIRECTION
-{
-	DIR_RIGHT = 1,
-	DIR_IDLE = 0,
-	DIR_LEFT = -1
-};
-
 class GameManager
 {
 private:
 	Character* m_Player;
 	Map* m_BackGround;
+	Menu* m_Menu;
 	static GameManager* m_hThis;
 public:
 	static GameManager* GetInstance()
@@ -35,8 +30,10 @@ public:
 			m_hThis = new GameManager;
 		return m_hThis;
 	}
-	void Update(float deltaTime);
-	void Draw(HDC backDC, char buf[]);
+	int ShowMenu(HWND hWnd, HDC hdc);
+	HBITMAP CreateDIBSectionRe(HDC hdc, int width, int height);
+	void Update(float deltaTime, int iCheck);
+	void Draw(HWND hWnd, HDC hdc);
 	void InitPlayer(HWND hWnd);
 	void InitMap(HWND hWnd);
 	//void DrawPlayer(HWND hWnd, HDC hdc)
@@ -50,6 +47,10 @@ public:
 	Map* GetBackGround()
 	{
 		return m_BackGround;
+	}
+	Menu* GetMenu()
+	{
+		return m_Menu;
 	}
 	GameManager();
 	~GameManager();
