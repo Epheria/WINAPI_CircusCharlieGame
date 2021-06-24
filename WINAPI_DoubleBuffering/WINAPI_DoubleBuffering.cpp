@@ -43,15 +43,13 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     MoveWindow(g_hWnd, 0, 0, SIZE_MAPX, SIZE_MAPY, true);
     HDC hdc = GetDC(g_hWnd);
     BitMapManager::GetInstance()->Init(g_hWnd);
-    GameManager::GetInstance()->InitPlayer(g_hWnd);
-    GameManager::GetInstance()->InitMap(g_hWnd);
-
+    GameManager::GetInstance()->Init(g_hWnd);
 
     MSG msg;
     ZeroMemory(&msg, sizeof(msg));
 
     LONGLONG checkTime, limitTime = GetTickCount64();
-    int iCheck = 1, iSelect;
+    int iCheck = 1;
     //GameManager::GetInstance()->DrawMap(hdc);
     // 게임 루프.
 
@@ -64,29 +62,15 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         }
         else
         {
-            iSelect = GameManager::GetInstance()->ShowMenu(g_hWnd, hdc);
-            while (iSelect != 2)
+            checkTime = GetTickCount64();
+            if (limitTime <= checkTime)
             {
-
-                checkTime = GetTickCount64();
-                if (limitTime <= checkTime)
-                {
-                    float deltaTime = (checkTime - limitTime) * 0.01f;
-                    limitTime = checkTime + 20;
-
-                    switch (iSelect)
-                    {
-                    case 1:
-                        GameManager::GetInstance()->Update(deltaTime, iCheck);
-                        GameManager::GetInstance()->Draw(g_hWnd, hdc);
-                        break;
-                    case 2:
-                        iSelect = 2;
-                        break;
-                    }
-                }
+                float deltaTime = (checkTime - limitTime) * 0.01f;
+                limitTime = checkTime + 20;
+                
+                GameManager::GetInstance()->Update(deltaTime, iCheck);
+                GameManager::GetInstance()->Draw(g_hWnd, hdc);
             }
-
         }
     }
 

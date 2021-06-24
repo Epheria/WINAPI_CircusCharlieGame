@@ -1,5 +1,4 @@
 #pragma once
-#pragma warning(disable:4996)
 #include <Windows.h>
 #include <string>
 #include <time.h>
@@ -16,12 +15,20 @@ enum MAPSIZE
 	SIZE_BACKY = 66
 };
 
+enum SELECT
+{
+	SELECT_MAINMENU,
+	SELECT_PLAY
+};
+
 class GameManager
 {
 private:
 	Character* m_Player;
 	Map* m_BackGround;
 	Menu* m_Menu;
+	char m_CurrSelectState;
+	char m_ctmp;
 	static GameManager* m_hThis;
 public:
 	static GameManager* GetInstance()
@@ -30,12 +37,10 @@ public:
 			m_hThis = new GameManager;
 		return m_hThis;
 	}
-	int ShowMenu(HWND hWnd, HDC hdc);
-	HBITMAP CreateDIBSectionRe(HDC hdc, int width, int height);
 	void Update(float deltaTime, int iCheck);
 	void Draw(HWND hWnd, HDC hdc);
-	void InitPlayer(HWND hWnd);
-	void InitMap(HWND hWnd);
+	void Init(HWND hWnd);
+	HBITMAP CreateDIBSectionRe(HDC hdc, int width, int height);
 	//void DrawPlayer(HWND hWnd, HDC hdc)
 	//{
 	//	m_Player->Draw(hdc, Index);
@@ -54,7 +59,5 @@ public:
 	}
 	GameManager();
 	~GameManager();
-
-
 };
 
