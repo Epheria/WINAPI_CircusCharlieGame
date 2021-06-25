@@ -23,10 +23,6 @@ private:
 	RECT m_BitMapRect;
 public:
 	Map();
-	BitMap* GetMapImage(BACKGROUND Index)
-	{
-		return m_pBitMap[Index];
-	}
 	void SetMapState(BACKGROUND Index)
 	{
 		m_eMapState = Index;
@@ -46,10 +42,12 @@ public:
 	void UpdateMoveLenx(int x)
 	{
 		m_imoveLen += x;
+		if (m_imoveLen <= 0)
+			m_imoveLen = 0;
+		if (m_imoveLen >= 5000)
+			m_imoveLen = 5000;
 	}
 	void Init(BACKGROUND Index, int x, int y);
-	void Draw(HDC hdc);
 	void MapDraw(HDC hdc);
 	~Map();
 };
-

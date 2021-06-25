@@ -25,6 +25,7 @@ private:
 	BitMap* m_pBitMap[MOVE_END];
 	float m_fTime;
 	//int m_iCheckMoveStatus;
+	int m_iMovedLength;
 	int m_ix;
 	int m_iy;
 	int m_iJumpDirection;
@@ -33,6 +34,16 @@ private:
 	bool m_bIsJump;
 	bool m_bControl;
 	RECT m_BitMapRect;
+
+	void UpdatePosy(int y)
+	{
+		m_iy += y;
+
+		if (m_iy <= 180)
+			m_iy = 180;
+		if (m_iy >= 285)
+			m_iy = 285;
+	}
 public:
 	Character();
 	inline BitMap* GetPlayerImage(MOVE_STATUS Index)
@@ -62,10 +73,8 @@ public:
 	void UpdatePosx(int x)
 	{
 		m_ix += x;
-	}
-	void UpdatePosy(int y)
-	{
-		m_iy += y;
+		if (m_ix >= 1000)
+			m_ix = 1000;
 	}
 	void UpdateJumpStatus(bool flag)
 	{
@@ -75,6 +84,10 @@ public:
 	bool GetJumpStatus()
 	{
 		return m_bIsJump;
+	}
+	void SetPosx(int x)
+	{
+		m_ix = x;
 	}
 	int GetPosx()
 	{
@@ -104,6 +117,14 @@ public:
 	void UpdateDirection(DIRECTION dir)
 	{
 		m_eDirection = dir;
+	}
+	void UdpateMovedLength(int x)
+	{
+		m_iMovedLength = x + m_ix;
+	}
+	int GetMovedLength()
+	{
+		return m_iMovedLength;
 	}
 	void PlayerUpdate(float deltaTime, int iCheck);
 	void Init(int x, int y);

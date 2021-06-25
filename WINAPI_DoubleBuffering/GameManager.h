@@ -6,6 +6,7 @@
 #include "Character.h"
 #include "Map.h"
 #include "Menu.h"
+#include "Obstacle.h"
 
 enum MAPSIZE
 {
@@ -27,6 +28,7 @@ private:
 	Character* m_Player;
 	Map* m_BackGround;
 	Menu* m_Menu;
+	Obstacle* m_Obstacle;
 	char m_CurrSelectState;
 	char m_ctmp;
 	static GameManager* m_hThis;
@@ -40,6 +42,7 @@ public:
 	void Update(float deltaTime, int iCheck);
 	void Draw(HWND hWnd, HDC hdc);
 	void Init(HWND hWnd);
+	bool FinalLineCheck(int x);
 	HBITMAP CreateDIBSectionRe(HDC hdc, int width, int height);
 	//void DrawPlayer(HWND hWnd, HDC hdc)
 	//{

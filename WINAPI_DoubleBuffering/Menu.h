@@ -27,11 +27,6 @@ private:
 	void DrawStar(HDC hdc);
 public:
 	Menu();
-	BitMap* GetMapImage(MENU Index)
-	{
-		return m_pBitMap[Index];
-
-	}
 	void Init(MENU Index, int x, int y);
 	void Draw(HDC hdc, char y);
 	~Menu();

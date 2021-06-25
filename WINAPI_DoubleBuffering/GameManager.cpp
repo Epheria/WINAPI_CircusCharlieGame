@@ -7,6 +7,7 @@ GameManager::GameManager()
 	m_Player = new Character;
 	m_BackGround = new Map;
     m_Menu = new Menu;
+    m_Obstacle = new Obstacle;
     m_ctmp = 0;
     m_CurrSelectState = 0;
 }
@@ -17,6 +18,7 @@ void GameManager::Init(HWND hWnd)
 	m_Player->Init(50, 285);
     m_BackGround->Init(BACKGROUND_TRACK, 0, 0);
     m_Menu->Init(MENU_SELECT, 0, 0);
+    m_Obstacle->Init(OBS_FIRE1, 0, 0);
 }
 
 void GameManager::Update(float deltaTime, int iCheck)
@@ -70,8 +72,19 @@ void GameManager::Update(float deltaTime, int iCheck)
                 }
             }
         }
-        m_BackGround->UpdateMoveLenx(x);
+        //if (m_BackGround->GetMoveLenx() <= 3900)
+        //    m_BackGround->UpdateMoveLenx(x);
+        //else
+        //    m_Player->UpdatePosx(x);
 
+        if (FinalLineCheck(x))
+            m_Player->UpdatePosx(x);
+        else
+            m_BackGround->UpdateMoveLenx(x);
+        
+        m_Obstacle->Update(deltaTime, x);
+
+        m_Player->UdpateMovedLength(m_BackGround->GetMoveLenx());
         m_Player->PlayerUpdate(deltaTime, iCheck);
     }
     break;
@@ -117,9 +130,10 @@ void GameManager::Draw(HWND hWnd, HDC hdc)
         ZeroMemory(buf, sizeof(buf));
 
         m_BackGround->MapDraw(backDC);
+        m_Obstacle->ObstacleDraw(backDC);
         m_Player->Draw(backDC);
-
-        sprintf_s(buf, "이동 거리 : %d", m_BackGround->GetMoveLenx());
+        
+        sprintf_s(buf, "이동 거리 : %d, 점프 높이 : %d", m_Player->GetMovedLength() , m_Player->GetPosy());
         TextOutA(backDC, 100, 50, buf, strlen(buf));
 
     
@@ -131,9 +145,26 @@ void GameManager::Draw(HWND hWnd, HDC hdc)
     DeleteObject(backDC);
 }
 
+bool GameManager::FinalLineCheck(int x)
+{
+    if (m_Player->GetPosx() < 50)
+    {
+        m_Player->SetPosx(50);
+        return false;
+    }
+
+    if (m_BackGround->GetMoveLenx() >= 3900)
+        return true;
+    else
+    {
+        return false;
+    }
+}
+
 GameManager::~GameManager()
 {
 	delete m_Player;
 	delete m_BackGround;
     delete m_Menu;
+    delete m_Obstacle;
 }

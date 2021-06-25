@@ -9,6 +9,7 @@ Character::Character()
 	m_bControl = false;
     m_bIsJump = false;
     m_iSjump = 0;
+    m_iMovedLength = 0;
 }
 
 void Character::Init(int x, int y)
@@ -61,14 +62,14 @@ void Character::PlayerUpdate(float deltaTime, int iCheck)
 
         if (m_iJumpDirection == 1 && m_iy <= 300)
         {
-            m_iy -= y;
+            UpdatePosy(-y);
 
             if (m_iy <= 180)
                 m_iJumpDirection = -1;
         }
         if (m_iJumpDirection == -1 && m_iy >= 170)
         {
-            m_iy += y;
+            UpdatePosy(y);
             if (m_iy >= 285)
                 m_iJumpDirection = 0;
         }

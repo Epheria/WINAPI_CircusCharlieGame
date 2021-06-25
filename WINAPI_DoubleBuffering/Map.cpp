@@ -23,19 +23,15 @@ void Map::Init(BACKGROUND Index, int x, int y)
 	m_BitMapRect.bottom = m_BitMapRect.top + m_pBitMap[Index]->GetSize().cy;
 }
 
-void Map::Draw(HDC hdc)
-{
-	m_pBitMap[m_eMapState]->Draw(hdc, m_ix, m_iy);
-}
-
 void Map::MapDraw(HDC hdc)
 {
 	int iCur = 0;
 	m_iy = 100;
+
 	for (int i = 0; i < (1200 + m_imoveLen) / 65; i++)
 	{
 		m_ix = 65 * i - m_imoveLen;
-		if(iCur % 7 == 0)
+		if (iCur % 7 == 0)
 			m_pBitMap[BACKGROUND_BACK1]->Draw(hdc, m_ix, m_iy);
 		else
 			m_pBitMap[BACKGROUND_BACK2]->Draw(hdc, m_ix, m_iy);
