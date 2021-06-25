@@ -9,8 +9,10 @@ Obstacle::Obstacle()
 void Obstacle::Update(float deltaTime, int x)
 {
 	m_fTime += deltaTime;
-	if (5.5f <= m_fTime)
+	if (1.0f <= m_fTime)
 	{
+		m_fTime = 0;
+
 		if (m_bAnim == false)
 			m_bAnim = true;
 		else
@@ -50,6 +52,11 @@ void Obstacle::ObstacleDraw(HDC hdc)
 			m_pBitMap[OBS_FIRE2]->Draw(hdc, m_ix, m_iy);
 		iCur++;
 	}
+
+#ifdef Debug_Rect
+	Rectangle();
+#endif // Debug_Rect
+
 }
 
 Obstacle::~Obstacle()
