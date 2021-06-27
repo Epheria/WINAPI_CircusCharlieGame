@@ -15,7 +15,7 @@ enum OBSTACLE
 	OBS_END
 };
 
-#define Debug_Rect
+//#define Debug_Rect
 
 class Obstacle
 {

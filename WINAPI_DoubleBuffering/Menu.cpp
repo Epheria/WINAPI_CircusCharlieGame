@@ -2,7 +2,8 @@
 
 Menu::Menu()
 {
-	m_star = 4;
+	m_fTime = 0;
+	m_cAnim = 0;
 }
 
 void Menu::Init(MENU Index, int x, int y)
@@ -22,6 +23,22 @@ void Menu::Init(MENU Index, int x, int y)
 	m_iy = y;
 }
 
+void Menu::Update(float deltaTime)
+{
+	m_fTime += deltaTime;
+	if (0.5f <= m_fTime)
+	{
+		m_fTime = 0;
+
+		if (m_cAnim == 0)
+			m_cAnim = 1;
+		else if (m_cAnim == 1)
+			m_cAnim = 2;
+		else if (m_cAnim == 2)
+			m_cAnim = 0;
+	}
+}
+
 void Menu::Draw(HDC hdc, char y)
 {
 	DrawMenu(hdc);
@@ -31,39 +48,54 @@ void Menu::Draw(HDC hdc, char y)
 
 void Menu::DrawStar(HDC hdc)
 {
-	if (m_star >= 6)
-	{
-		m_star = 4;
-	}
+	char j = 0 , k = 0;
 
 	for (int i = 0; i < 16; i++)
 	{
-		m_pBitMap[(MENU)m_star]->Draw(hdc, 450 + (i * 14), 173);
-	}
+		if (j > 2)
+			j = 0;
+		if (k > 5)
+			k = 0;
 
-	/*for (int i = 0; i < 16; i++)
-	{
-		m_pBitMap[(MENU)m_star]->Draw(hdc, 450 + (i * 14), 173);
-		m_pBitMap[(MENU)m_star]->Draw(hdc, 450 + (i * 14), 80);
-		if (m_star >= 6)
+		if (j == 0)
 		{
-			m_star = 4;
+			if (m_cAnim == 0)
+				StarInfo(hdc, 4, i, k);
+			else if (m_cAnim == 1)
+				StarInfo(hdc, 5, i, k);
+			else if (m_cAnim == 2)
+				StarInfo(hdc, 6, i, k);
 		}
-		m_star++;
-	}
-
-	for (int j = 0; j < 6; j++)
-	{
-		m_pBitMap[(MENU)m_star]->Draw(hdc, 440, 95 + (j * 13));
-		m_pBitMap[(MENU)m_star]->Draw(hdc, 670, 95 + (j * 13));
-		if (m_star >= 6)
+		else if(j == 1)
 		{
-			m_star = 4;
+			if (m_cAnim == 1)
+				StarInfo(hdc, 4, i, k);
+			else if (m_cAnim == 2)
+				StarInfo(hdc, 5, i, k);
+			else if (m_cAnim == 0)
+				StarInfo(hdc, 6, i, k);
 		}
-		m_star++;
-	}*/
+		else if(j == 2)
+		{
+			if (m_cAnim == 2)
+				StarInfo(hdc, 4, i, k);
+			else if (m_cAnim == 0)
+				StarInfo(hdc, 5, i, k);
+			else if (m_cAnim == 1)
+				StarInfo(hdc, 6, i, k);
+		}
+		j++;
+		k++;
+	}
+}
 
-	m_star++;
+void Menu::StarInfo(HDC hdc, int index, char i, char k)
+{
+	m_pBitMap[index]->Draw(hdc, 450 + (i * 14), 173);
+	m_pBitMap[index]->Draw(hdc, 660 - (i * 14), 80);
+
+	m_pBitMap[index]->Draw(hdc, 440, 95 + (k * 13));
+	m_pBitMap[index]->Draw(hdc, 670, 160 - (k * 13));
 }
 
 void Menu::DrawMenu(HDC hdc)

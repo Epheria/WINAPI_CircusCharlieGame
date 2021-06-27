@@ -26,6 +26,7 @@ void GameManager::Update(float deltaTime, int iCheck)
     switch (m_CurrSelectState)
     {
     case SELECT_MAINMENU:
+        m_Menu->Update(deltaTime);
         if (GetAsyncKeyState(VK_UP))
         {
             m_ctmp--;
