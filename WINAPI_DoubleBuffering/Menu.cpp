@@ -50,42 +50,40 @@ void Menu::DrawStar(HDC hdc)
 {
 	char j = 0 , k = 0;
 
-	for (int i = 0; i < 16; i++)
+	for (int i = 0; i < 16; i++,j++,k++)
 	{
 		if (j > 2)
 			j = 0;
 		if (k > 5)
 			k = 0;
 
-		if (j == 0)
+		switch (j)
 		{
+		case 0:
 			if (m_cAnim == 0)
 				StarInfo(hdc, 4, i, k);
 			else if (m_cAnim == 1)
 				StarInfo(hdc, 5, i, k);
 			else if (m_cAnim == 2)
 				StarInfo(hdc, 6, i, k);
-		}
-		else if(j == 1)
-		{
+			break;
+		case 1:
 			if (m_cAnim == 1)
 				StarInfo(hdc, 4, i, k);
 			else if (m_cAnim == 2)
 				StarInfo(hdc, 5, i, k);
 			else if (m_cAnim == 0)
 				StarInfo(hdc, 6, i, k);
-		}
-		else if(j == 2)
-		{
+			break;
+		case 2:
 			if (m_cAnim == 2)
 				StarInfo(hdc, 4, i, k);
 			else if (m_cAnim == 0)
 				StarInfo(hdc, 5, i, k);
 			else if (m_cAnim == 1)
 				StarInfo(hdc, 6, i, k);
+			break;
 		}
-		j++;
-		k++;
 	}
 }
 

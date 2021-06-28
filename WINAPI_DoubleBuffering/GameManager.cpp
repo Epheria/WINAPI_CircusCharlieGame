@@ -45,6 +45,11 @@ void GameManager::Update(float deltaTime, int iCheck)
         break;
     case SELECT_PLAY:
     {
+        if (m_Obstacle->ColliderCheck(m_Player->GetRect()))
+        {
+            return;
+        }
+
         int x = m_Player->GetDistx(deltaTime);
 
         if (!m_Player->GetJumpStatus())
@@ -78,12 +83,17 @@ void GameManager::Update(float deltaTime, int iCheck)
         //else
         //    m_Player->UpdatePosx(x);
 
+        m_Obstacle->Update(deltaTime);
+
         if (FinalLineCheck(x))
+        {
             m_Player->UpdatePosx(x);
+        }
         else
+        {
             m_BackGround->UpdateMoveLenx(x);
-        
-        m_Obstacle->Update(deltaTime, x);
+            m_Obstacle->UpdateMoveLenx(x);
+        }
 
         m_Player->UdpateMovedLength(m_BackGround->GetMoveLenx());
         m_Player->PlayerUpdate(deltaTime, iCheck);
@@ -133,6 +143,13 @@ void GameManager::Draw(HWND hWnd, HDC hdc)
         m_BackGround->MapDraw(backDC);
         m_Obstacle->ObstacleDraw(backDC);
         m_Player->Draw(backDC);
+
+
+        if (m_Obstacle->ColliderCheck(m_Player->GetRect()))
+        {
+            sprintf_s(buf, "충돌 충돌");
+            TextOutA(backDC, 50, 500, buf, strlen(buf));
+        }
         
         sprintf_s(buf, "이동 거리 : %d, 점프 높이 : %d", m_Player->GetMovedLength() , m_Player->GetPosy());
         TextOutA(backDC, 100, 50, buf, strlen(buf));

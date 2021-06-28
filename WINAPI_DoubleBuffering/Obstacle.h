@@ -15,30 +15,40 @@ enum OBSTACLE
 	OBS_END
 };
 
-//#define Debug_Rect
+#define Debug_Rect
 
 class Obstacle
 {
 private:
 	OBSTACLE m_eObstacleState;
 	BitMap* m_pBitMap[OBS_END];
+	RECT m_BitMapRect;
+	RECT m_CheckRect;
 	float m_fTime;
 	int m_imoveLen;
 	int m_ix;
 	int m_iy;
 	bool m_bAnim;
+	RECT m_Recttmp;
 public:
 	Obstacle();
 	void UpdateMoveLenx(int x)
 	{
+		m_iy = 300;
 		m_imoveLen += x;
 		if (m_imoveLen <= 0)
 			m_imoveLen = 0;
 		if (m_imoveLen >= 5000)
-			m_imoveLen = 5000;
+			m_imoveLen = 5000; 
 	}
-	void Update(float deltaTime, int x);
+	RECT GetRect()
+	{
+		return m_CheckRect;
+	}
+	void Update(float deltaTime);
 	void Init(OBSTACLE Index, int x, int y);
+	void RectUpdate();
 	void ObstacleDraw(HDC hdc);
+	bool ColliderCheck(RECT Player);
 	~Obstacle();
 };

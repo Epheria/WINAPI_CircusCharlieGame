@@ -29,11 +29,25 @@ void Character::Init(int x, int y)
 void Character::Draw(HDC hdc)
 {
 	m_pBitMap[m_eCharacterState]->Draw(hdc, m_ix, m_iy);
+#ifdef Debug_Rect
+    Rectangle(hdc, m_BitMapRect.left, m_BitMapRect.top, m_BitMapRect.right, m_BitMapRect.bottom);
+#endif // Debug_Rect
 }
 
-bool Character::ColliderCheck(POINT point)
+bool Character::ColliderCheck(RECT Obstacle)
 {
-	return true;
+    if (IntersectRect(m_Recttmp, &m_BitMapRect, &Obstacle))
+        return true;
+    
+    return false;
+}
+
+void Character::RectUpdate()
+{
+    m_BitMapRect.left = m_ix;
+    m_BitMapRect.top = m_iy;
+    m_BitMapRect.right = m_BitMapRect.left + m_pBitMap[MOVE_IDLE]->GetSize().cx;
+    m_BitMapRect.bottom = m_BitMapRect.top + m_pBitMap[MOVE_IDLE]->GetSize().cy;
 }
 
 void Character::PlayerUpdate(float deltaTime, int iCheck)
@@ -98,6 +112,8 @@ void Character::PlayerUpdate(float deltaTime, int iCheck)
             m_eCharacterState = MOVE_IDLE;
         }
     }
+
+    RectUpdate();
 }
 
 Character::~Character()

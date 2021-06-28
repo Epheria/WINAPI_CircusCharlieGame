@@ -18,6 +18,8 @@ enum DIRECTION
 	DIR_LEFT = -1
 };
 
+#define Debug_Rect
+
 class Character
 {
 private:
@@ -34,6 +36,7 @@ private:
 	bool m_bIsJump;
 	bool m_bControl;
 	RECT m_BitMapRect;
+	LPRECT m_Recttmp;
 
 	void UpdatePosy(int y)
 	{
@@ -126,10 +129,15 @@ public:
 	{
 		return m_iMovedLength;
 	}
+	RECT GetRect()
+	{
+		return m_BitMapRect;
+	}
+	void RectUpdate();
 	void PlayerUpdate(float deltaTime, int iCheck);
 	void Init(int x, int y);
 	void Draw(HDC hdc);
-	bool ColliderCheck(POINT point);
+	bool ColliderCheck(RECT Obstacle);
 	~Character();
 };
 
