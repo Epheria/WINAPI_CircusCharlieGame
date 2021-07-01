@@ -23,23 +23,60 @@ private:
 	OBSTACLE m_eObstacleState;
 	BitMap* m_pBitMap[OBS_END];
 	RECT m_BitMapRect;
+	RECT m_BitMapRect2;
 	RECT m_CheckRect;
 	float m_fTime;
+	float m_fRingTime;
 	int m_imoveLen;
+	int m_iBackGroundLen;
+	int m_iMaxMapDraw;
 	int m_ix;
+	int m_ix2;
+	int m_iRingx;
+	int m_iRingx2;
 	int m_iy;
 	bool m_bAnim;
 	RECT m_Recttmp;
 public:
 	Obstacle();
-	void UpdateMoveLenx(int x)
+	void UpdateMoveLenx(int x, int x_ring)
 	{
-		m_iy = 300;
 		m_imoveLen += x;
-		if (m_imoveLen <= 0)
-			m_imoveLen = 0;
-		if (m_imoveLen >= 5000)
-			m_imoveLen = 5000; 
+		m_ix -= x;
+		m_ix2 -= x;
+
+		m_iRingx -= x_ring + x;
+		m_iRingx2 -= x_ring + x;
+
+		m_iy = 300;
+
+		if (0 < x)
+		{
+			if (m_ix <= -(m_iBackGroundLen))
+			{
+				m_ix = m_ix2 + m_iBackGroundLen;
+			}
+			if (m_ix2 <= -(m_iBackGroundLen))
+			{
+				m_ix2 = m_ix + m_iBackGroundLen;
+			}
+		}
+		else if (0 > x)
+		{
+			if (m_ix >= (m_iBackGroundLen))
+			{
+				m_ix = m_ix2 - m_iBackGroundLen;
+			}
+			if (m_ix2 >= (m_iBackGroundLen))
+			{
+				m_ix2 = m_ix - m_iBackGroundLen;
+			}
+		}
+
+		//if (m_imoveLen <= 0)
+		//	m_imoveLen = 0;
+		//if (m_imoveLen >= 5000)
+		//	m_imoveLen = 5000; 
 	}
 	RECT GetRect()
 	{
@@ -47,7 +84,7 @@ public:
 	}
 	void Update(float deltaTime);
 	void Init(OBSTACLE Index, int x, int y);
-	void RectUpdate();
+	void RectUpdate(int x);
 	void ObstacleDraw(HDC hdc);
 	bool ColliderCheck(RECT Player);
 	~Obstacle();

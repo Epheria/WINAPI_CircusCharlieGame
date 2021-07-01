@@ -45,12 +45,13 @@ void GameManager::Update(float deltaTime, int iCheck)
         break;
     case SELECT_PLAY:
     {
-        if (m_Obstacle->ColliderCheck(m_Player->GetRect()))
-        {
-            return;
-        }
+        //if (m_Obstacle->ColliderCheck(m_Player->GetRect()))
+        //{
+        //    return;
+        //}
 
         int x = m_Player->GetDistx(deltaTime);
+        int x_ring = 50 * deltaTime;
 
         if (!m_Player->GetJumpStatus())
         {
@@ -91,8 +92,12 @@ void GameManager::Update(float deltaTime, int iCheck)
         }
         else
         {
+            if (m_Player->GetMovedLength() <= 0)
+            {
+                x = 1;
+            }
             m_BackGround->UpdateMoveLenx(x);
-            m_Obstacle->UpdateMoveLenx(x);
+            m_Obstacle->UpdateMoveLenx(x, x_ring);
         }
 
         m_Player->UdpateMovedLength(m_BackGround->GetMoveLenx());

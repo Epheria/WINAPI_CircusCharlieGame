@@ -2,6 +2,14 @@
 #include<Windows.h>
 #include<string>
 
+enum MAPSIZE
+{
+	SIZE_MAPX = 1100,
+	SIZE_MAPY = 700,
+	SIZE_BACKX = 65,
+	SIZE_BACKY = 66
+};
+
 class BitMap
 {
 private:
@@ -11,7 +19,7 @@ private:
 	SIZE m_Size;
 public:
 	void Init(HDC hdc,char* FileName);
-	void Draw(HDC hdc, int x, int y);
+	void Draw(HDC hdc, int x, int y, bool isAlpha = true);
 	void DrawBackGround(HDC hdc, int x, int y);
 	inline SIZE GetSize()
 	{

@@ -8,14 +8,6 @@
 #include "Menu.h"
 #include "Obstacle.h"
 
-enum MAPSIZE
-{
-	SIZE_MAPX = 1100,
-	SIZE_MAPY = 700,
-	SIZE_BACKX = 65,
-	SIZE_BACKY = 66
-};
-
 enum SELECT
 {
 	SELECT_MAINMENU,
