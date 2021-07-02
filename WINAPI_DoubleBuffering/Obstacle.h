@@ -26,7 +26,6 @@ private:
 	RECT m_BitMapRect2;
 	RECT m_CheckRect;
 	float m_fTime;
-	float m_fRingTime;
 	int m_imoveLen;
 	int m_iBackGroundLen;
 	int m_iMaxMapDraw;
@@ -36,9 +35,15 @@ private:
 	int m_iRingx2;
 	int m_iy;
 	bool m_bAnim;
+	bool m_bCollider;
 	RECT m_Recttmp;
 public:
 	Obstacle();
+	void UdpateFinalRing(int x, int x_ring)
+	{
+		m_iRingx -= x_ring;
+		m_iRingx2 -= x_ring;
+	}
 	void UpdateMoveLenx(int x, int x_ring)
 	{
 		m_imoveLen += x;
@@ -82,10 +87,14 @@ public:
 	{
 		return m_CheckRect;
 	}
+	bool GetColliderCheck()
+	{
+		return m_bCollider;
+	}
 	void Update(float deltaTime);
 	void Init(OBSTACLE Index, int x, int y);
-	void RectUpdate(int x);
-	void ObstacleDraw(HDC hdc);
-	bool ColliderCheck(RECT Player);
+	void RectUpdate(HDC hdc, int x, RECT Player);
+	void ObstacleDraw(HDC hdc, RECT Player);
+	void ColliderCheck(RECT Player);
 	~Obstacle();
 };

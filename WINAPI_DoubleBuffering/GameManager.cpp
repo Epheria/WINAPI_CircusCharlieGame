@@ -51,7 +51,7 @@ void GameManager::Update(float deltaTime, int iCheck)
         //}
 
         int x = m_Player->GetDistx(deltaTime);
-        int x_ring = 50 * deltaTime;
+        int x_ring = 30 * deltaTime;
 
         if (!m_Player->GetJumpStatus())
         {
@@ -89,6 +89,7 @@ void GameManager::Update(float deltaTime, int iCheck)
         if (FinalLineCheck(x))
         {
             m_Player->UpdatePosx(x);
+            m_Obstacle->UdpateFinalRing(x, x_ring);
         }
         else
         {
@@ -146,11 +147,11 @@ void GameManager::Draw(HWND hWnd, HDC hdc)
         ZeroMemory(buf, sizeof(buf));
 
         m_BackGround->MapDraw(backDC);
-        m_Obstacle->ObstacleDraw(backDC);
+        m_Obstacle->ObstacleDraw(backDC, m_Player->GetRect());
         m_Player->Draw(backDC);
 
-
-        if (m_Obstacle->ColliderCheck(m_Player->GetRect()))
+        //m_Player->GetRect();
+        if (m_Obstacle->GetColliderCheck())
         {
             sprintf_s(buf, "충돌 충돌");
             TextOutA(backDC, 50, 500, buf, strlen(buf));

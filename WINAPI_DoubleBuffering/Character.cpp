@@ -44,10 +44,10 @@ bool Character::ColliderCheck(RECT Obstacle)
 
 void Character::RectUpdate()
 {
-    m_BitMapRect.left = m_ix;
-    m_BitMapRect.top = m_iy;
-    m_BitMapRect.right = m_BitMapRect.left + m_pBitMap[MOVE_IDLE]->GetSize().cx;
-    m_BitMapRect.bottom = m_BitMapRect.top + m_pBitMap[MOVE_IDLE]->GetSize().cy;
+    m_BitMapRect.left = m_ix + 5;
+    m_BitMapRect.top = m_iy + 5;
+    m_BitMapRect.right = m_BitMapRect.left + m_pBitMap[MOVE_IDLE]->GetSize().cx - 10;
+    m_BitMapRect.bottom = m_BitMapRect.top + m_pBitMap[MOVE_IDLE]->GetSize().cy - 10;
 }
 
 void Character::PlayerUpdate(float deltaTime, int iCheck)
