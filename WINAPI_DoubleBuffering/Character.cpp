@@ -5,9 +5,11 @@ Character::Character()
     m_iJumpDirection = 0;
     m_eDirection = DIRECTION::DIR_IDLE;
     m_fTime = 0;
+    m_fDeadTime = 0;
 	m_eCharacterState = MOVE_IDLE;
 	m_bControl = false;
     m_bIsJump = false;
+    m_bIsDead = false;
     m_iSjump = 0;
     m_iMovedLength = 0;
 }
@@ -34,20 +36,12 @@ void Character::Draw(HDC hdc)
 #endif // Debug_Rect
 }
 
-bool Character::ColliderCheck(RECT Obstacle)
-{
-    if (IntersectRect(m_Recttmp, &m_BitMapRect, &Obstacle))
-        return true;
-    
-    return false;
-}
-
 void Character::RectUpdate()
 {
-    m_BitMapRect.left = m_ix + 5;
-    m_BitMapRect.top = m_iy + 5;
-    m_BitMapRect.right = m_BitMapRect.left + m_pBitMap[MOVE_IDLE]->GetSize().cx - 10;
-    m_BitMapRect.bottom = m_BitMapRect.top + m_pBitMap[MOVE_IDLE]->GetSize().cy - 10;
+    m_BitMapRect.left = m_ix + 10;
+    m_BitMapRect.top = m_iy + 10;
+    m_BitMapRect.right = m_BitMapRect.left + m_pBitMap[MOVE_IDLE]->GetSize().cx - 15;
+    m_BitMapRect.bottom = m_BitMapRect.top + m_pBitMap[MOVE_IDLE]->GetSize().cy - 15;
 }
 
 void Character::PlayerUpdate(float deltaTime, int iCheck)
@@ -58,21 +52,6 @@ void Character::PlayerUpdate(float deltaTime, int iCheck)
     {
         x = GetDistx(deltaTime);
         y = GetDisty(deltaTime);
-
-     /*   if (m_iDirection == 1)
-        {
-            if (m_BackGround->GetControlState() == true)
-                m_BackGround->UpdateMoveLenx(x);
-            else
-                m_Player->UpdatePosx(x);
-        }
-        else if (bSuperJump[1] == true)
-        {
-            if (m_BackGround->GetControlState() == true)
-                m_BackGround->UpdateMoveLenx(-x);
-            else
-                m_Player->UpdatePosx(-x);
-        }*/
 
         if (m_iJumpDirection == 1 && m_iy <= 300)
         {
@@ -92,7 +71,6 @@ void Character::PlayerUpdate(float deltaTime, int iCheck)
         {
             m_iSjump = 0;
             m_bIsJump = false;
-           //m_iDirection = 0; // super jump 가 false 였음 나중에 확인
         }
     }
 
@@ -100,6 +78,13 @@ void Character::PlayerUpdate(float deltaTime, int iCheck)
     if (0.3f <= m_fTime)
     {
         m_fTime = 0;
+        if (m_bIsJump == true)
+        {
+            m_eCharacterState = MOVE_IDLE;
+        }
+        if (m_bIsDead == true)
+            m_eCharacterState = MOVE_DIE;
+
         switch (m_eCharacterState)
         {
         case MOVE_IDLE:
@@ -108,11 +93,20 @@ void Character::PlayerUpdate(float deltaTime, int iCheck)
             else
                 m_eCharacterState = MOVE_IDLE;
             break;
+        case MOVE_DIE:
+            m_fDeadTime += deltaTime;
+            if (2.0f <= m_fDeadTime)
+            {
+                m_fDeadTime = 0;
+                m_bIsDead == false;
+                m_eCharacterState = MOVE_IDLE;
+            }
+            break;
         default:
             m_eCharacterState = MOVE_IDLE;
         }
     }
-
+    //m_bIsDead == false;
     RectUpdate();
 }
 

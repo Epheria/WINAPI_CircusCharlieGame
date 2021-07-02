@@ -26,6 +26,7 @@ private:
 	MOVE_STATUS m_eCharacterState;
 	BitMap* m_pBitMap[MOVE_END];
 	float m_fTime;
+	float m_fDeadTime;
 	//int m_iCheckMoveStatus;
 	int m_iMovedLength;
 	int m_ix;
@@ -33,6 +34,7 @@ private:
 	int m_iJumpDirection;
 	DIRECTION m_eDirection;
 	int m_iSjump;
+	bool m_bIsDead;
 	bool m_bIsJump;
 	bool m_bControl;
 	RECT m_BitMapRect;
@@ -92,6 +94,10 @@ public:
 	{
 		m_ix = x;
 	}
+	void UdpateDeadState(bool flag)
+	{
+		m_bIsDead = flag;
+	}
 	int GetPosx()
 	{
 		return m_ix;
@@ -137,7 +143,6 @@ public:
 	void PlayerUpdate(float deltaTime, int iCheck);
 	void Init(int x, int y);
 	void Draw(HDC hdc);
-	bool ColliderCheck(RECT Obstacle);
 	~Character();
 };
 

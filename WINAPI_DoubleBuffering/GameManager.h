@@ -10,8 +10,9 @@
 
 enum SELECT
 {
-	SELECT_MAINMENU,
-	SELECT_PLAY
+	SELECT_DEFAULT = -1,
+	SELECT_PLAY1,
+	SELECT_PLAY2
 };
 
 class GameManager

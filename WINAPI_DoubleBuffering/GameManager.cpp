@@ -9,7 +9,7 @@ GameManager::GameManager()
     m_Menu = new Menu;
     m_Obstacle = new Obstacle;
     m_ctmp = 0;
-    m_CurrSelectState = 0;
+    m_CurrSelectState = -1;
 }
 
 void GameManager::Init(HWND hWnd)
@@ -25,7 +25,7 @@ void GameManager::Update(float deltaTime, int iCheck)
 {
     switch (m_CurrSelectState)
     {
-    case SELECT_MAINMENU:
+    case SELECT_DEFAULT:
         m_Menu->Update(deltaTime);
         if (GetAsyncKeyState(VK_UP))
         {
@@ -43,7 +43,8 @@ void GameManager::Update(float deltaTime, int iCheck)
             m_CurrSelectState = m_ctmp;
         }
         break;
-    case SELECT_PLAY:
+    case SELECT_PLAY1:
+    case SELECT_PLAY2:
     {
         //if (m_Obstacle->ColliderCheck(m_Player->GetRect()))
         //{
@@ -52,6 +53,14 @@ void GameManager::Update(float deltaTime, int iCheck)
 
         int x = m_Player->GetDistx(deltaTime);
         int x_ring = 30 * deltaTime;
+
+        // 점프 상태 일때 죽었을 경우 점프상태의 애니메이션 제한걸기
+        m_Player->UdpateDeadState(false);
+        if (m_Obstacle->GetColliderCheck())
+        {
+            iCheck = 1;
+            m_Player->UdpateDeadState(true);
+        }
 
         if (!m_Player->GetJumpStatus())
         {
@@ -73,6 +82,7 @@ void GameManager::Update(float deltaTime, int iCheck)
 
             if (GetAsyncKeyState(VK_SPACE))
             {
+                iCheck = 1;
                 if (false == m_Player->GetJumpStatus())
                 {
                     m_Player->UpdateJumpStatus(true);
@@ -103,15 +113,14 @@ void GameManager::Update(float deltaTime, int iCheck)
 
         m_Player->UdpateMovedLength(m_BackGround->GetMoveLenx());
         m_Player->PlayerUpdate(deltaTime, iCheck);
-    }
-    break;
-    }
 
+        break;
+    }
+    }
     /*if (m_BackGround->GetMoveLenx() >= 8000)
     {
 
     }*/
-
 }
 
 HBITMAP GameManager::CreateDIBSectionRe(HDC hdc, int width, int height)
@@ -136,12 +145,14 @@ void GameManager::Draw(HWND hWnd, HDC hdc)
     HDC backDC = CreateCompatibleDC(hdc);
     HBITMAP backBitmap = CreateDIBSectionRe(hdc, windowRect.right - windowRect.left, windowRect.bottom - windowRect.top);
     HBITMAP oldBack = (HBITMAP)SelectObject(backDC, backBitmap);
+
     switch (m_CurrSelectState)
     {
-    case SELECT_MAINMENU:
+    case SELECT_DEFAULT:
         m_Menu->Draw(backDC, m_ctmp);
         break;
-    case SELECT_PLAY:
+    case SELECT_PLAY1:
+    case SELECT_PLAY2:
     
         char buf[256];
         ZeroMemory(buf, sizeof(buf));
@@ -151,7 +162,7 @@ void GameManager::Draw(HWND hWnd, HDC hdc)
         m_Player->Draw(backDC);
 
         //m_Player->GetRect();
-        if (m_Obstacle->GetColliderCheck())
+        if (true == m_Obstacle->GetColliderCheck())
         {
             sprintf_s(buf, "충돌 충돌");
             TextOutA(backDC, 50, 500, buf, strlen(buf));
