@@ -34,6 +34,8 @@ private:
 	int m_iJumpDirection;
 	DIRECTION m_eDirection;
 	int m_iSjump;
+	int m_iLife;
+	int m_iScore;
 	bool m_bIsDead;
 	bool m_bIsJump;
 	bool m_bControl;
@@ -134,6 +136,14 @@ public:
 	int GetMovedLength()
 	{
 		return m_iMovedLength;
+	}
+	int GetScore()
+	{
+		return m_iScore;
+	}
+	int GetLife()
+	{
+		return m_iLife;
 	}
 	RECT GetRect()
 	{

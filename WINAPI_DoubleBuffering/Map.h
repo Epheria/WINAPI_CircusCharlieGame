@@ -8,6 +8,10 @@ enum BACKGROUND
 	BACKGROUND_BACK1,
 	BACKGROUND_BACK2,
 	BACKGROUND_BACK3,
+	BACKGROUND_GOAL,
+	BACKGROUND_INTERFACE,
+	BACKGROUND_LIFE,
+	BACKGROUND_METER,
 	BACKGROUND_END
 };
 
@@ -22,8 +26,11 @@ private:
 	int m_ix2;
 	int m_iy;
 	int m_iMaxMapDraw;
+	int m_iMeter;
+	int m_iBonusScore;
+	int m_iScore;
+	int m_iLife;
 	bool m_bControl;
-	RECT m_BitMapRect;
 public:
 	Map();
 	void SetMapState(BACKGROUND Index)
@@ -77,6 +84,8 @@ public:
 		//	m_imoveLen = 5000;
 	}
 	void Init(BACKGROUND Index, int x, int y);
+	void Update(int MovedLen, int Life, float deltaTime, int pScore, int pLife);
+	void MeterCheck(int MovedLen);
 	void MapDraw(HDC hdc);
 	~Map();
 };

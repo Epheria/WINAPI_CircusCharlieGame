@@ -12,6 +12,8 @@ Character::Character()
     m_bIsDead = false;
     m_iSjump = 0;
     m_iMovedLength = 0;
+    m_iScore = 0;
+    m_iLife = 4;
 }
 
 void Character::Init(int x, int y)

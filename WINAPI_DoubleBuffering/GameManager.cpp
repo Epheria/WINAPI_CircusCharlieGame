@@ -113,7 +113,7 @@ void GameManager::Update(float deltaTime, int iCheck)
 
         m_Player->UdpateMovedLength(m_BackGround->GetMoveLenx());
         m_Player->PlayerUpdate(deltaTime, iCheck);
-
+        m_BackGround->Update(m_Player->GetMovedLength(), 0, deltaTime, m_Player->GetScore(), m_Player->GetLife());
         break;
     }
     }

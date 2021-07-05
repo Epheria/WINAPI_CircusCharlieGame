@@ -63,15 +63,15 @@ void Obstacle::RectUpdate(HDC hdc, int x, RECT Player)
 		{
 		case 0:
 			m_BitMapRect.left = m_ix + x;
-			m_BitMapRect.top = m_iy;
+			m_BitMapRect.top = m_iy + 10;
 			m_BitMapRect.right = m_BitMapRect.left + m_pBitMap[OBS_FIRE1]->GetSize().cx;
-			m_BitMapRect.bottom = m_BitMapRect.top + m_pBitMap[OBS_FIRE1]->GetSize().cy;
+			m_BitMapRect.bottom = m_BitMapRect.top + m_pBitMap[OBS_FIRE1]->GetSize().cy - 10;
 			break;
 		case 1:
 			m_BitMapRect.left = m_ix2 + x;
-			m_BitMapRect.top = m_iy;
+			m_BitMapRect.top = m_iy + 10;
 			m_BitMapRect.right = m_BitMapRect.left + m_pBitMap[OBS_FIRE1]->GetSize().cx;
-			m_BitMapRect.bottom = m_BitMapRect.top + m_pBitMap[OBS_FIRE1]->GetSize().cy;
+			m_BitMapRect.bottom = m_BitMapRect.top + m_pBitMap[OBS_FIRE1]->GetSize().cy - 10;
 			break;
 		case 2:
 			m_BitMapRect.left = m_iRingx + 10;
