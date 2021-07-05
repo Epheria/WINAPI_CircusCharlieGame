@@ -12,6 +12,8 @@ enum OBSTACLE
 	OBS_RING2,
 	OBS_RING3,
 	OBS_RING4,
+	OBS_CASH,
+	OBS_GOAL,
 	OBS_END
 };
 
@@ -23,7 +25,7 @@ private:
 	OBSTACLE m_eObstacleState;
 	BitMap* m_pBitMap[OBS_END];
 	RECT m_BitMapRect;
-	RECT m_BitMapRect2;
+	RECT m_ScoreRect;
 	RECT m_CheckRect;
 	float m_fTime;
 	int m_imoveLen;
@@ -36,6 +38,7 @@ private:
 	int m_iy;
 	bool m_bAnim;
 	bool m_bCollider;
+	bool m_bColliderScore;
 	RECT m_Recttmp;
 public:
 	Obstacle();
@@ -85,16 +88,22 @@ public:
 	}
 	RECT GetRect()
 	{
-		return m_CheckRect;
+		return m_BitMapRect;
 	}
 	bool GetColliderCheck()
 	{
 		return m_bCollider;
+	}
+	bool GetColliderScore()
+	{
+		return m_bColliderScore;
 	}
 	void Update(float deltaTime);
 	void Init(OBSTACLE Index, int x, int y);
 	void RectUpdate(HDC hdc, int x, RECT Player);
 	void ObstacleDraw(HDC hdc, RECT Player);
 	void ColliderCheck(RECT Player);
+	void ColliderScoreCheck(RECT Player);
+	void Reset();
 	~Obstacle();
 };

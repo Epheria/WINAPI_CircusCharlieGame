@@ -30,10 +30,10 @@ void Map::Init(BACKGROUND Index, int x, int y)
 	m_ix2 = m_ix + m_iBackGroundLen;
 }
 
-void Map::Update(int MovedLen, int Life, float deltaTime, int pScore, int pLife)
+void Map::Update(int MovedLen, int Life, int iBonusScore, int pScore, int pLife)
 {
 	MeterCheck(MovedLen);
-	m_iBonusScore -= deltaTime;
+	m_iBonusScore = iBonusScore;
 	m_iScore = pScore;
 	m_iLife = pLife;
 }
@@ -119,6 +119,13 @@ void Map::MeterCheck(int MovedLen)
 {
 	int x = MovedLen / 1000;
 	m_iMeter = (10 - x) * 10;
+}
+
+void Map::Reset()
+{
+	m_imoveLen = 0;
+	m_ix = 0;
+	m_ix2 = m_ix + m_iBackGroundLen;
 }
 
 Map::~Map()

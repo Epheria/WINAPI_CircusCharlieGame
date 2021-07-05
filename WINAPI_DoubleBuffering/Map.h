@@ -84,8 +84,9 @@ public:
 		//	m_imoveLen = 5000;
 	}
 	void Init(BACKGROUND Index, int x, int y);
-	void Update(int MovedLen, int Life, float deltaTime, int pScore, int pLife);
+	void Update(int MovedLen, int Life, int iBonusScore, int pScore, int pLife);
 	void MeterCheck(int MovedLen);
 	void MapDraw(HDC hdc);
+	void Reset();
 	~Map();
 };

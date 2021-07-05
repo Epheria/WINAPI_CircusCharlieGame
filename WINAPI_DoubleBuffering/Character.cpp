@@ -9,7 +9,6 @@ Character::Character()
 	m_eCharacterState = MOVE_IDLE;
 	m_bControl = false;
     m_bIsJump = false;
-    m_bIsDead = false;
     m_iSjump = 0;
     m_iMovedLength = 0;
     m_iScore = 0;
@@ -33,17 +32,23 @@ void Character::Init(int x, int y)
 void Character::Draw(HDC hdc)
 {
 	m_pBitMap[m_eCharacterState]->Draw(hdc, m_ix, m_iy);
+
 #ifdef Debug_Rect
     Rectangle(hdc, m_BitMapRect.left, m_BitMapRect.top, m_BitMapRect.right, m_BitMapRect.bottom);
 #endif // Debug_Rect
 }
 
+void Character::DrawDie(HDC hdc)
+{
+    m_pBitMap[MOVE_DIE]->Draw(hdc, m_ix, m_iy);
+}
+
 void Character::RectUpdate()
 {
-    m_BitMapRect.left = m_ix + 10;
+    m_BitMapRect.left = m_ix + 15;
     m_BitMapRect.top = m_iy + 10;
-    m_BitMapRect.right = m_BitMapRect.left + m_pBitMap[MOVE_IDLE]->GetSize().cx - 15;
-    m_BitMapRect.bottom = m_BitMapRect.top + m_pBitMap[MOVE_IDLE]->GetSize().cy - 15;
+    m_BitMapRect.right = m_BitMapRect.left + m_pBitMap[MOVE_IDLE]->GetSize().cx - 25;
+    m_BitMapRect.bottom = m_BitMapRect.top + m_pBitMap[MOVE_IDLE]->GetSize().cy - 25;
 }
 
 void Character::PlayerUpdate(float deltaTime, int iCheck)
@@ -84,8 +89,6 @@ void Character::PlayerUpdate(float deltaTime, int iCheck)
         {
             m_eCharacterState = MOVE_IDLE;
         }
-        if (m_bIsDead == true)
-            m_eCharacterState = MOVE_DIE;
 
         switch (m_eCharacterState)
         {
@@ -95,21 +98,25 @@ void Character::PlayerUpdate(float deltaTime, int iCheck)
             else
                 m_eCharacterState = MOVE_IDLE;
             break;
-        case MOVE_DIE:
-            m_fDeadTime += deltaTime;
-            if (2.0f <= m_fDeadTime)
-            {
-                m_fDeadTime = 0;
-                m_bIsDead == false;
-                m_eCharacterState = MOVE_IDLE;
-            }
-            break;
         default:
             m_eCharacterState = MOVE_IDLE;
         }
     }
-    //m_bIsDead == false;
     RectUpdate();
+}
+
+bool Character::DeatCheck()
+{
+    m_iLife--;
+    return true;
+}
+
+void Character::Reset()
+{
+    m_iMovedLength = 0;
+    m_iJumpDirection = 0;
+    m_iScore = 0;
+    m_iy = 285;
 }
 
 Character::~Character()

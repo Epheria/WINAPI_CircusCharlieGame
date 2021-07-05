@@ -36,11 +36,10 @@ private:
 	int m_iSjump;
 	int m_iLife;
 	int m_iScore;
-	bool m_bIsDead;
 	bool m_bIsJump;
 	bool m_bControl;
 	RECT m_BitMapRect;
-	LPRECT m_Recttmp;
+	RECT m_Recttmp;
 
 	void UpdatePosy(int y)
 	{
@@ -96,10 +95,6 @@ public:
 	{
 		m_ix = x;
 	}
-	void UdpateDeadState(bool flag)
-	{
-		m_bIsDead = flag;
-	}
 	int GetPosx()
 	{
 		return m_ix;
@@ -141,6 +136,14 @@ public:
 	{
 		return m_iScore;
 	}
+	void PlusScore(int iScore)
+	{
+		m_iScore += iScore;
+	}
+	void ResetLife()
+	{
+		m_iLife = 4;
+	}
 	int GetLife()
 	{
 		return m_iLife;
@@ -152,7 +155,10 @@ public:
 	void RectUpdate();
 	void PlayerUpdate(float deltaTime, int iCheck);
 	void Init(int x, int y);
+	void Reset();
 	void Draw(HDC hdc);
+	void DrawDie(HDC hdc);
+	bool DeatCheck();
 	~Character();
 };
 

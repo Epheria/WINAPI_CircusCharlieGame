@@ -9,7 +9,11 @@ GameManager::GameManager()
     m_Menu = new Menu;
     m_Obstacle = new Obstacle;
     m_ctmp = 0;
-    m_CurrSelectState = -1;
+    m_CurrSelectState = SELECT_DEFAULT;
+    m_iBonusScore = 10000;
+    m_bGameOver = false;
+    m_fTime = 0;
+    m_fTime2 = 0;
 }
 
 void GameManager::Init(HWND hWnd)
@@ -53,14 +57,7 @@ void GameManager::Update(float deltaTime, int iCheck)
 
         int x = m_Player->GetDistx(deltaTime);
         int x_ring = 30 * deltaTime;
-
-        // 점프 상태 일때 죽었을 경우 점프상태의 애니메이션 제한걸기
-        m_Player->UdpateDeadState(false);
-        if (m_Obstacle->GetColliderCheck())
-        {
-            iCheck = 1;
-            m_Player->UdpateDeadState(true);
-        }
+        m_iBonusScore -= deltaTime;
 
         if (!m_Player->GetJumpStatus())
         {
@@ -113,14 +110,40 @@ void GameManager::Update(float deltaTime, int iCheck)
 
         m_Player->UdpateMovedLength(m_BackGround->GetMoveLenx());
         m_Player->PlayerUpdate(deltaTime, iCheck);
-        m_BackGround->Update(m_Player->GetMovedLength(), 0, deltaTime, m_Player->GetScore(), m_Player->GetLife());
+
+        m_BackGround->Update(m_Player->GetMovedLength(), 0, m_iBonusScore, m_Player->GetScore(), m_Player->GetLife());
+
+        m_fTime2 += deltaTime;
+        if (1.5f <= m_fTime2 && true == m_Obstacle->GetColliderScore())
+        {
+            m_fTime2 = 0;
+            m_Player->PlusScore(100);
+        }
+
         break;
     }
-    }
-    /*if (m_BackGround->GetMoveLenx() >= 8000)
-    {
+    case SELECT_GAMEOVER:
+        m_fTime += deltaTime;
+        
+        if (1.5f <= m_fTime)
+        {
+            m_bGameOver = m_Player->DeatCheck();
+            m_fTime = 0;
+            m_CurrSelectState = SELECT_PLAY1;
+            m_Player->Reset();
+            m_BackGround->Reset();
+            m_Obstacle->Reset();
+            m_iBonusScore = 10000;
+        }
 
-    }*/
+        if (m_Player->GetLife() <= 0)
+        {
+            m_CurrSelectState = SELECT_DEFAULT;
+            m_Player->ResetLife();
+        }
+
+        break;
+    }
 }
 
 HBITMAP GameManager::CreateDIBSectionRe(HDC hdc, int width, int height)
@@ -153,19 +176,25 @@ void GameManager::Draw(HWND hWnd, HDC hdc)
         break;
     case SELECT_PLAY1:
     case SELECT_PLAY2:
+    case SELECT_GAMEOVER:
     
         char buf[256];
         ZeroMemory(buf, sizeof(buf));
 
         m_BackGround->MapDraw(backDC);
         m_Obstacle->ObstacleDraw(backDC, m_Player->GetRect());
-        m_Player->Draw(backDC);
+
+        if (m_CurrSelectState == SELECT_GAMEOVER)
+            m_Player->DrawDie(backDC);
+        else
+            m_Player->Draw(backDC);
 
         //m_Player->GetRect();
         if (true == m_Obstacle->GetColliderCheck())
         {
             sprintf_s(buf, "충돌 충돌");
             TextOutA(backDC, 50, 500, buf, strlen(buf));
+            m_CurrSelectState = SELECT_GAMEOVER;
         }
         
         sprintf_s(buf, "이동 거리 : %d, 점프 높이 : %d", m_Player->GetMovedLength() , m_Player->GetPosy());

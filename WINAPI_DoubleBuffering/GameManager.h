@@ -12,7 +12,8 @@ enum SELECT
 {
 	SELECT_DEFAULT = -1,
 	SELECT_PLAY1,
-	SELECT_PLAY2
+	SELECT_PLAY2,
+	SELECT_GAMEOVER
 };
 
 class GameManager
@@ -24,6 +25,9 @@ private:
 	Obstacle* m_Obstacle;
 	char m_CurrSelectState;
 	char m_ctmp;
+	int m_iBonusScore;
+	float m_fTime, m_fTime2;
+	bool m_bGameOver;
 	static GameManager* m_hThis;
 public:
 	static GameManager* GetInstance()

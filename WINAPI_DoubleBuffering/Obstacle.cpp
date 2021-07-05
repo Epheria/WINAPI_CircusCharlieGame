@@ -3,8 +3,46 @@
 Obstacle::Obstacle()
 {
 	m_bAnim = false;
-	m_bCollider = false;
 	m_fTime = 0;
+	m_imoveLen = 0;
+	m_bCollider = false;
+	m_bColliderScore = false;
+}
+
+void Obstacle::Init(OBSTACLE Index, int x, int y)
+{
+	//int index;
+	//for (int i = OBS_FIRE1; i < OBS_END; i++)
+	//{
+	//	if (i == 0 || i == 1)
+	//		index = 6;
+	//	else if (i == 2 || i == 3)
+	//		index = 10;
+	//	else
+	//		index = 22;
+	//	m_pBitMap[i] = BitMapManager::GetInstance()->GetImage((IMAGE)(i + index));
+
+	//}
+
+	m_pBitMap[OBS_FIRE1] = BitMapManager::GetInstance()->GetImage(IMAGE_FIRE_1);
+	m_pBitMap[OBS_FIRE2] = BitMapManager::GetInstance()->GetImage(IMAGE_FIRE_2);
+	m_pBitMap[OBS_LITTLERING1] = BitMapManager::GetInstance()->GetImage(IMAGE_LITTLERING_1);
+	m_pBitMap[OBS_LITTLERING2] = BitMapManager::GetInstance()->GetImage(IMAGE_LITTLERING_2);
+	m_pBitMap[OBS_RING1] = BitMapManager::GetInstance()->GetImage(IMAGE_RING_1);
+	m_pBitMap[OBS_RING2] = BitMapManager::GetInstance()->GetImage(IMAGE_RING_2);
+	m_pBitMap[OBS_RING3] = BitMapManager::GetInstance()->GetImage(IMAGE_RING_3);
+	m_pBitMap[OBS_RING4] = BitMapManager::GetInstance()->GetImage(IMAGE_RING_4);
+	m_pBitMap[OBS_CASH] = BitMapManager::GetInstance()->GetImage(IMAGE_CASH);
+	m_pBitMap[OBS_GOAL] = BitMapManager::GetInstance()->GetImage(IMAGE_GOAL);
+
+	m_ix = x;
+	m_iy = y;
+	m_iMaxMapDraw = SIZE_MAPX / m_pBitMap[OBS_FIRE1]->GetSize().cx;
+	m_iBackGroundLen = m_pBitMap[OBS_FIRE1]->GetSize().cx * m_iMaxMapDraw;
+	m_ix2 = m_ix + m_iBackGroundLen;
+
+	m_iRingx = SIZE_MAPX;
+	m_iRingx2 = SIZE_MAPX + 500;
 }
 
 void Obstacle::Update(float deltaTime)
@@ -57,7 +95,7 @@ void Obstacle::RectUpdate(HDC hdc, int x, RECT Player)
 //	Rectangle(hdc, m_BitMapRect.left + 5, m_BitMapRect.top + 5, m_BitMapRect.right - 5, m_BitMapRect.bottom);
 //#endif // Debug_Rect
 
-	for (int i = 0; i < 6; i++) // 불 단지 2개, 화염 링 위쪽 & 아래쪽
+	for (int i = 0; i < 8; i++) // 불 단지 2개, 화염 링 위쪽 & 아래쪽
 	{
 		switch (i)
 		{
@@ -74,10 +112,10 @@ void Obstacle::RectUpdate(HDC hdc, int x, RECT Player)
 			m_BitMapRect.bottom = m_BitMapRect.top + m_pBitMap[OBS_FIRE1]->GetSize().cy - 10;
 			break;
 		case 2:
-			m_BitMapRect.left = m_iRingx + 10;
-			m_BitMapRect.top = 170;
-			m_BitMapRect.right = m_BitMapRect.left + m_pBitMap[OBS_RING1]->GetSize().cx * 2.0f - 10;
-			m_BitMapRect.bottom = 190;
+			m_ScoreRect.left = m_iRingx + 10;
+			m_ScoreRect.top = 210;
+			m_ScoreRect.right = m_ScoreRect.left + m_pBitMap[OBS_RING1]->GetSize().cx * 2.0f - 10;
+			m_ScoreRect.bottom = 230;
 			break;
 		case 3:
 			m_BitMapRect.left = m_iRingx + 10;
@@ -86,10 +124,10 @@ void Obstacle::RectUpdate(HDC hdc, int x, RECT Player)
 			m_BitMapRect.bottom = 300;
 			break;
 		case 4:
-			m_BitMapRect.left = m_iRingx2 + 10;
-			m_BitMapRect.top = 170;
-			m_BitMapRect.right = m_BitMapRect.left + m_pBitMap[OBS_LITTLERING1]->GetSize().cx * 2.0f - 10;
-			m_BitMapRect.bottom = 190;
+			m_ScoreRect.left = m_iRingx2 + 10;
+			m_ScoreRect.top = 190;
+			m_ScoreRect.right = m_ScoreRect.left + m_pBitMap[OBS_LITTLERING1]->GetSize().cx * 2.0f - 10;
+			m_ScoreRect.bottom = 210;
 			break;
 		case 5:
 			m_BitMapRect.left = m_iRingx2 + 10;
@@ -97,46 +135,44 @@ void Obstacle::RectUpdate(HDC hdc, int x, RECT Player)
 			m_BitMapRect.right = m_BitMapRect.left + m_pBitMap[OBS_LITTLERING1]->GetSize().cx * 2.0f - 20;
 			m_BitMapRect.bottom = 275;
 			break;
+		case 6:
+			m_ScoreRect.left = m_ix + x;
+			m_ScoreRect.top = 250;
+			m_ScoreRect.right = m_ScoreRect.left + 5;
+			m_ScoreRect.bottom = 270;
+			break;
+		case 7:
+			m_ScoreRect.left = m_ix2 + x;
+			m_ScoreRect.top = 250;
+			m_ScoreRect.right = m_ScoreRect.left + 5;
+			m_ScoreRect.bottom = 270;
+			break;
 		}
 
 		ColliderCheck(Player);
-		if (m_bCollider == true)
+		ColliderScoreCheck(Player);
+		if (m_bCollider == true || m_bColliderScore == true)
 			return;
 
 #ifdef Debug_Rect
 		Rectangle(hdc, m_BitMapRect.left + 5, m_BitMapRect.top + 5, m_BitMapRect.right - 5, m_BitMapRect.bottom);
+		Rectangle(hdc, m_ScoreRect.left + 5, m_ScoreRect.top + 5, m_ScoreRect.right - 5, m_ScoreRect.bottom);
 #endif // Debug_Rect
 	}
 
 }
 
-void Obstacle::Init(OBSTACLE Index, int x, int y)
-{
-	int index;
-	for (int i = OBS_FIRE1; i < OBS_END; i++)
-	{
-		if (i == 0 || i == 1)
-			index = 6;
-		else if (i == 2 || i == 3)
-			index = 10;
-		else
-			index = 22;
-		m_pBitMap[i] = BitMapManager::GetInstance()->GetImage((IMAGE)(i + index));
-
-	}
-	m_ix = x;
-	m_iy = y;
-	m_iMaxMapDraw = SIZE_MAPX / m_pBitMap[OBS_FIRE1]->GetSize().cx;
-	m_iBackGroundLen = m_pBitMap[OBS_FIRE1]->GetSize().cx * m_iMaxMapDraw;
-	m_ix2 = m_ix + m_iBackGroundLen;
-
-	m_iRingx = SIZE_MAPX;
-	m_iRingx2 = SIZE_MAPX + 500;
-}
-
 void Obstacle::ObstacleDraw(HDC hdc, RECT Player)
 {
+	char buf[256];
+	ZeroMemory(buf, sizeof(buf));
+
 	OBSTACLE STATE;
+	if (m_imoveLen >= 3900)
+		m_pBitMap[OBS_GOAL]->Draw(hdc, 1000, 300);
+	//sprintf_s(buf, "이동거리 : %d", m_imoveLen);
+	//TextOutA(hdc, 20, 200, buf, strlen(buf));
+
 
 	for (int i = 0; i < m_iMaxMapDraw; i++)
 	{
@@ -146,8 +182,8 @@ void Obstacle::ObstacleDraw(HDC hdc, RECT Player)
 		{
 			STATE = m_bAnim ? OBS_FIRE1 : OBS_FIRE2;
 			RectUpdate(hdc, x, Player);
-			m_pBitMap[STATE]->Draw(hdc, m_ix + x, m_iy, true);
-			m_pBitMap[STATE]->Draw(hdc, m_ix2 + x, m_iy, true);
+			m_pBitMap[STATE]->Draw(hdc, m_ix + x, m_iy);
+			m_pBitMap[STATE]->Draw(hdc, m_ix2 + x, m_iy);
 		}
 		//if (i == 7 && m_bAnim)
 		//{
@@ -164,12 +200,13 @@ void Obstacle::ObstacleDraw(HDC hdc, RECT Player)
 
 		m_iy = 170;
 		STATE = m_bAnim ? OBS_RING1 : OBS_RING3;
-		m_pBitMap[STATE]->Draw(hdc, m_iRingx, m_iy, true);
-		m_pBitMap[STATE + 1]->Draw(hdc, m_iRingx + 26, m_iy, true);
+		m_pBitMap[STATE]->Draw(hdc, m_iRingx, m_iy);
+		m_pBitMap[STATE + 1]->Draw(hdc, m_iRingx + 26, m_iy);
 
 		m_iy = 170;
-		m_pBitMap[OBS_LITTLERING1]->Draw(hdc, m_iRingx2, m_iy, true);
-		m_pBitMap[OBS_LITTLERING2]->Draw(hdc, m_iRingx2 + 26, m_iy, true);
+		m_pBitMap[OBS_LITTLERING1]->Draw(hdc, m_iRingx2, m_iy);
+		m_pBitMap[OBS_LITTLERING2]->Draw(hdc, m_iRingx2 + 26, m_iy);
+		m_pBitMap[OBS_CASH]->Draw(hdc, m_iRingx2 + 10, m_iy + 20);
 	}
 }
 
@@ -181,6 +218,26 @@ void Obstacle::ColliderCheck(RECT Player)
 	}
 	else
 		m_bCollider = false;
+}
+
+void Obstacle::ColliderScoreCheck(RECT Player)
+{
+	if (IntersectRect(&m_Recttmp, &m_ScoreRect, &Player))
+	{
+		m_bColliderScore = true;
+	}
+	else
+		m_bColliderScore = false;
+}
+
+void Obstacle::Reset()
+{
+	m_imoveLen = 0;
+	m_ix = 0;
+	m_ix2 = m_ix + m_iBackGroundLen;
+
+	m_iRingx = SIZE_MAPX;
+	m_iRingx2 = SIZE_MAPX + 500;
 }
 
 Obstacle::~Obstacle()
