@@ -21,6 +21,7 @@ private:
 	BACKGROUND m_eMapState;
 	BitMap* m_pBitMap[BACKGROUND_END];
 	int m_imoveLen;
+	int m_iPlayerMovedLen;
 	int m_iBackGroundLen;
 	int m_ix;
 	int m_ix2;
@@ -30,6 +31,8 @@ private:
 	int m_iBonusScore;
 	int m_iScore;
 	int m_iLife;
+	float m_fTime;
+	bool m_bAnim;
 	bool m_bControl;
 public:
 	Map();
@@ -84,7 +87,7 @@ public:
 		//	m_imoveLen = 5000;
 	}
 	void Init(BACKGROUND Index, int x, int y);
-	void Update(int MovedLen, int Life, int iBonusScore, int pScore, int pLife);
+	void Update(float deltaTime, int MovedLen, int Life, int iBonusScore, int pScore, int pLife);
 	void MeterCheck(int MovedLen);
 	void MapDraw(HDC hdc);
 	void Reset();

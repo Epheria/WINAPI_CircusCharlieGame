@@ -111,14 +111,14 @@ void GameManager::Update(float deltaTime, int iCheck)
         m_Player->UdpateMovedLength(m_BackGround->GetMoveLenx());
         m_Player->PlayerUpdate(deltaTime, iCheck);
 
-        m_BackGround->Update(m_Player->GetMovedLength(), 0, m_iBonusScore, m_Player->GetScore(), m_Player->GetLife());
+        m_BackGround->Update(deltaTime, m_Player->GetMovedLength(), 0, m_iBonusScore, m_Player->GetScore(), m_Player->GetLife());
 
-        m_fTime2 += deltaTime;
-        if (1.5f <= m_fTime2 && true == m_Obstacle->GetColliderScore())
-        {
-            m_fTime2 = 0;
-            m_Player->PlusScore(100);
-        }
+        //m_fTime2 += deltaTime;
+        //if (1.5f <= m_fTime2 && true == m_Obstacle->GetColliderScore())
+        //{
+        //    m_fTime2 = 0;
+        //    m_Player->PlusScore(100);
+        //}
 
         break;
     }
@@ -160,7 +160,7 @@ HBITMAP GameManager::CreateDIBSectionRe(HDC hdc, int width, int height)
     return CreateDIBSection(hdc, &bm_info, DIB_RGB_COLORS, (void**)&pBits, NULL, 0);
 }
 
-void GameManager::Draw(HWND hWnd, HDC hdc)
+void GameManager::Draw(float deltaTime, HWND hWnd, HDC hdc)
 {
     RECT windowRect;
     GetWindowRect(hWnd, &windowRect);
@@ -182,7 +182,7 @@ void GameManager::Draw(HWND hWnd, HDC hdc)
         ZeroMemory(buf, sizeof(buf));
 
         m_BackGround->MapDraw(backDC);
-        m_Obstacle->ObstacleDraw(backDC, m_Player->GetRect());
+        m_Obstacle->ObstacleDraw(deltaTime, backDC, m_Player);
 
         if (m_CurrSelectState == SELECT_GAMEOVER)
             m_Player->DrawDie(backDC);

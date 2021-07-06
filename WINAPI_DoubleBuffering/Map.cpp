@@ -11,6 +11,8 @@ Map::Map()
 	m_ix2 = 0;
 	m_iBonusScore = 10000;
 	m_iScore = 0;
+	m_fTime = 0;
+	m_bAnim = false;
 }
 
 void Map::Init(BACKGROUND Index, int x, int y)
@@ -30,9 +32,20 @@ void Map::Init(BACKGROUND Index, int x, int y)
 	m_ix2 = m_ix + m_iBackGroundLen;
 }
 
-void Map::Update(int MovedLen, int Life, int iBonusScore, int pScore, int pLife)
+void Map::Update(float deltaTime, int MovedLen, int Life, int iBonusScore, int pScore, int pLife)
 {
+	m_fTime += deltaTime;
+	if (1.0f <= m_fTime)
+	{
+		m_fTime = 0;
+		if (m_bAnim == false)
+			m_bAnim = true;
+		else
+			m_bAnim = false;
+	}
+
 	MeterCheck(MovedLen);
+	m_iPlayerMovedLen = MovedLen;
 	m_iBonusScore = iBonusScore;
 	m_iScore = pScore;
 	m_iLife = pLife;
@@ -77,8 +90,21 @@ void Map::MapDraw(HDC hdc)
 		}
 		else
 		{
-			m_pBitMap[BACKGROUND_BACK2]->Draw(hdc, m_ix + x, m_iy, false);
-			m_pBitMap[BACKGROUND_BACK2]->Draw(hdc, m_ix2 + x, m_iy, false);
+			if (m_iPlayerMovedLen >= 4000 && m_bAnim == true)
+			{
+				m_pBitMap[BACKGROUND_BACK2]->Draw(hdc, m_ix + x, m_iy, false);
+				m_pBitMap[BACKGROUND_BACK2]->Draw(hdc, m_ix2 + x, m_iy, false);
+			}
+			else if (m_iPlayerMovedLen >= 4000 && m_bAnim == false)
+			{
+				m_pBitMap[BACKGROUND_BACK3]->Draw(hdc, m_ix + x - 2, m_iy + 2, false);
+				m_pBitMap[BACKGROUND_BACK3]->Draw(hdc, m_ix2 + x - 2, m_iy + 2, false);
+			}
+			else
+			{
+				m_pBitMap[BACKGROUND_BACK2]->Draw(hdc, m_ix + x, m_iy, false);
+				m_pBitMap[BACKGROUND_BACK2]->Draw(hdc, m_ix2 + x, m_iy, false);
+			}
 		}
 		m_iy = 165;
 		m_pBitMap[BACKGROUND_TRACK]->Draw(hdc, m_ix + x, m_iy, false);

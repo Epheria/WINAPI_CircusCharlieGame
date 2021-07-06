@@ -1,6 +1,7 @@
 #pragma once
 #include "BitMap.h"
 #include "BitMapManager.h"
+#include "Character.h"
 
 enum OBSTACLE
 {
@@ -38,7 +39,7 @@ private:
 	int m_iy;
 	bool m_bAnim;
 	bool m_bCollider;
-	bool m_bColliderScore;
+	bool m_bColliderScore[4];
 	RECT m_Recttmp;
 public:
 	Obstacle();
@@ -63,10 +64,14 @@ public:
 			if (m_ix <= -(m_iBackGroundLen))
 			{
 				m_ix = m_ix2 + m_iBackGroundLen;
+				for (int i = 0; i < 2; i++)
+					m_bColliderScore[i] = false;
 			}
 			if (m_ix2 <= -(m_iBackGroundLen))
 			{
 				m_ix2 = m_ix + m_iBackGroundLen;
+				for (int i = 0; i < 2; i++)
+					m_bColliderScore[i] = false;
 			}
 		}
 		else if (0 > x)
@@ -100,10 +105,11 @@ public:
 	}
 	void Update(float deltaTime);
 	void Init(OBSTACLE Index, int x, int y);
-	void RectUpdate(HDC hdc, int x, RECT Player);
-	void ObstacleDraw(HDC hdc, RECT Player);
-	void ColliderCheck(RECT Player);
-	void ColliderScoreCheck(RECT Player);
+	void RectUpdate(float deltaTime, HDC hdc, int x, Character* Player);
+	void ObstacleDraw(float deltaTime, HDC hdc, Character* Player);
+	void ColliderCheck(Character* Player);
+	void ColliderScoreCheck(float deltaTime, Character* Player, int index);
+	void SetRect(RECT& rect, int left, int right, int top, int bottom);
 	void Reset();
 	~Obstacle();
 };

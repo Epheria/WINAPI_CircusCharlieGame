@@ -69,7 +69,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                 limitTime = checkTime + 20;
                 
                 GameManager::GetInstance()->Update(deltaTime, iCheck);
-                GameManager::GetInstance()->Draw(g_hWnd, hdc);
+                GameManager::GetInstance()->Draw(deltaTime, g_hWnd, hdc);
             }
         }
     }

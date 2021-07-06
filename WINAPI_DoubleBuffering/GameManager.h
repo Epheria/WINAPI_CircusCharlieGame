@@ -37,7 +37,7 @@ public:
 		return m_hThis;
 	}
 	void Update(float deltaTime, int iCheck);
-	void Draw(HWND hWnd, HDC hdc);
+	void Draw(float deltaTime, HWND hWnd, HDC hdc);
 	void Init(HWND hWnd);
 	bool FinalLineCheck(int x);
 	HBITMAP CreateDIBSectionRe(HDC hdc, int width, int height);

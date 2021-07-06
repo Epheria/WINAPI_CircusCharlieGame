@@ -116,6 +116,7 @@ void Character::Reset()
     m_iMovedLength = 0;
     m_iJumpDirection = 0;
     m_iScore = 0;
+    m_ix = 50;
     m_iy = 285;
 }
 

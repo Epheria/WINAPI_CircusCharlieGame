@@ -6,7 +6,8 @@ Obstacle::Obstacle()
 	m_fTime = 0;
 	m_imoveLen = 0;
 	m_bCollider = false;
-	m_bColliderScore = false;
+	for (int i = 0; i < 4; i++)
+		m_bColliderScore[i] = false;
 }
 
 void Obstacle::Init(OBSTACLE Index, int x, int y)
@@ -61,10 +62,12 @@ void Obstacle::Update(float deltaTime)
 	if (0 >= m_iRingx)
 	{
 		m_iRingx = SIZE_MAPX;
+		m_bColliderScore[2] = false;
 	}
 	if (0 >= m_iRingx2)
 	{
 		m_iRingx2 = SIZE_MAPX;
+		m_bColliderScore[3] = false;
 	}
 
 	/*m_fTime += deltaTime;
@@ -75,94 +78,73 @@ void Obstacle::Update(float deltaTime)
 		m_iRingx = SIZE_MAPX;
 		m_iRingx2 = SIZE_MAPX;
 	}*/
+
 }
 
-void Obstacle::RectUpdate(HDC hdc, int x, RECT Player)
+void Obstacle::SetRect(RECT& rect, int left, int right, int top, int bottom)
 {
-	// RECT 한개로 FOR 문돌려서  할 수 있음
+	rect.left = left;
+	rect.right = left + right;
+	rect.top = top;
+	rect.bottom = top + bottom;
+}
 
-//	m_BitMapRect.left = m_ix + x;
-//	m_BitMapRect.top = m_iy;
-//	m_BitMapRect.right = m_BitMapRect.left + m_pBitMap[OBS_FIRE1]->GetSize().cx;
-//	m_BitMapRect.bottom = m_BitMapRect.top + m_pBitMap[OBS_FIRE1]->GetSize().cy;
-//
-//	m_BitMapRect.left = m_ix2 + x;
-//	m_BitMapRect.top = m_iy;
-//	m_BitMapRect.right = m_BitMapRect.left + m_pBitMap[OBS_FIRE1]->GetSize().cx;
-//	m_BitMapRect.bottom = m_BitMapRect.top + m_pBitMap[OBS_FIRE1]->GetSize().cy;
-//
-//#ifdef Debug_Rect
-//	Rectangle(hdc, m_BitMapRect.left + 5, m_BitMapRect.top + 5, m_BitMapRect.right - 5, m_BitMapRect.bottom);
-//#endif // Debug_Rect
-
-	for (int i = 0; i < 8; i++) // 불 단지 2개, 화염 링 위쪽 & 아래쪽
+void Obstacle::RectUpdate(float deltaTime, HDC hdc, int x, Character* Player)
+{
+	for (int i = 0; i < 4; i++)
 	{
 		switch (i)
 		{
 		case 0:
-			m_BitMapRect.left = m_ix + x;
-			m_BitMapRect.top = m_iy + 10;
-			m_BitMapRect.right = m_BitMapRect.left + m_pBitMap[OBS_FIRE1]->GetSize().cx;
-			m_BitMapRect.bottom = m_BitMapRect.top + m_pBitMap[OBS_FIRE1]->GetSize().cy - 10;
+			SetRect(m_ScoreRect, m_ix + 350, 10, 240, 40);
 			break;
 		case 1:
-			m_BitMapRect.left = m_ix2 + x;
-			m_BitMapRect.top = m_iy + 10;
-			m_BitMapRect.right = m_BitMapRect.left + m_pBitMap[OBS_FIRE1]->GetSize().cx;
-			m_BitMapRect.bottom = m_BitMapRect.top + m_pBitMap[OBS_FIRE1]->GetSize().cy - 10;
+			SetRect(m_ScoreRect, m_ix2 + 350, 10, 240, 40);
 			break;
 		case 2:
-			m_ScoreRect.left = m_iRingx + 10;
-			m_ScoreRect.top = 210;
-			m_ScoreRect.right = m_ScoreRect.left + m_pBitMap[OBS_RING1]->GetSize().cx * 2.0f - 10;
-			m_ScoreRect.bottom = 230;
+			SetRect(m_ScoreRect, m_iRingx + 10, 10, 210, 40);
 			break;
 		case 3:
-			m_BitMapRect.left = m_iRingx + 10;
-			m_BitMapRect.top = 280;
-			m_BitMapRect.right = m_BitMapRect.left + m_pBitMap[OBS_RING1]->GetSize().cx * 2.0f - 20;
-			m_BitMapRect.bottom = 300;
-			break;
-		case 4:
-			m_ScoreRect.left = m_iRingx2 + 10;
-			m_ScoreRect.top = 190;
-			m_ScoreRect.right = m_ScoreRect.left + m_pBitMap[OBS_LITTLERING1]->GetSize().cx * 2.0f - 10;
-			m_ScoreRect.bottom = 210;
-			break;
-		case 5:
-			m_BitMapRect.left = m_iRingx2 + 10;
-			m_BitMapRect.top = 265;
-			m_BitMapRect.right = m_BitMapRect.left + m_pBitMap[OBS_LITTLERING1]->GetSize().cx * 2.0f - 20;
-			m_BitMapRect.bottom = 275;
-			break;
-		case 6:
-			m_ScoreRect.left = m_ix + x;
-			m_ScoreRect.top = 250;
-			m_ScoreRect.right = m_ScoreRect.left + 5;
-			m_ScoreRect.bottom = 270;
-			break;
-		case 7:
-			m_ScoreRect.left = m_ix2 + x;
-			m_ScoreRect.top = 250;
-			m_ScoreRect.right = m_ScoreRect.left + 5;
-			m_ScoreRect.bottom = 270;
+			SetRect(m_ScoreRect, m_iRingx2 + 10, 10, 210, 40);
 			break;
 		}
 
+		if(m_bColliderScore[i] == false)
+			ColliderScoreCheck(deltaTime, Player, i);
+
+#ifdef Debug_Rect
+			Rectangle(hdc, m_ScoreRect.left, m_ScoreRect.top, m_ScoreRect.right, m_ScoreRect.bottom);
+#endif // Debug_Rect
+	}
+
+	for (int i = 0; i < 4; i++) // 불 단지 2개, 화염 링 위쪽 & 아래쪽
+	{
+		switch (i)
+		{
+		case 0:
+			SetRect(m_BitMapRect, m_ix + 350, 50 , m_iy + 10, 40);
+			break;
+		case 1:
+			SetRect(m_BitMapRect, m_ix2 + 350, 50, m_iy + 10, 40);
+			break;
+		case 2:
+			SetRect(m_BitMapRect, m_iRingx + 10, 22, 280, 20);
+			break;
+		case 3:
+			SetRect(m_BitMapRect, m_iRingx2 + 10, 22, 265, 10);
+			break;
+		}
 		ColliderCheck(Player);
-		ColliderScoreCheck(Player);
-		if (m_bCollider == true || m_bColliderScore == true)
+		if (m_bCollider == true)
 			return;
 
 #ifdef Debug_Rect
 		Rectangle(hdc, m_BitMapRect.left + 5, m_BitMapRect.top + 5, m_BitMapRect.right - 5, m_BitMapRect.bottom);
-		Rectangle(hdc, m_ScoreRect.left + 5, m_ScoreRect.top + 5, m_ScoreRect.right - 5, m_ScoreRect.bottom);
 #endif // Debug_Rect
 	}
-
 }
 
-void Obstacle::ObstacleDraw(HDC hdc, RECT Player)
+void Obstacle::ObstacleDraw(float deltaTime, HDC hdc, Character* Player)
 {
 	char buf[256];
 	ZeroMemory(buf, sizeof(buf));
@@ -181,9 +163,9 @@ void Obstacle::ObstacleDraw(HDC hdc, RECT Player)
 		if (i == 7)
 		{
 			STATE = m_bAnim ? OBS_FIRE1 : OBS_FIRE2;
-			RectUpdate(hdc, x, Player);
 			m_pBitMap[STATE]->Draw(hdc, m_ix + x, m_iy);
 			m_pBitMap[STATE]->Draw(hdc, m_ix2 + x, m_iy);
+			RectUpdate(deltaTime, hdc, x, Player);
 		}
 		//if (i == 7 && m_bAnim)
 		//{
@@ -206,13 +188,16 @@ void Obstacle::ObstacleDraw(HDC hdc, RECT Player)
 		m_iy = 170;
 		m_pBitMap[OBS_LITTLERING1]->Draw(hdc, m_iRingx2, m_iy);
 		m_pBitMap[OBS_LITTLERING2]->Draw(hdc, m_iRingx2 + 26, m_iy);
-		m_pBitMap[OBS_CASH]->Draw(hdc, m_iRingx2 + 10, m_iy + 20);
+
+		if(m_bColliderScore[3] == false)
+			m_pBitMap[OBS_CASH]->Draw(hdc, m_iRingx2 + 10, m_iy + 20);
 	}
 }
 
-void Obstacle::ColliderCheck(RECT Player)
+void Obstacle::ColliderCheck(Character* Player)
 {
-	if (IntersectRect(&m_Recttmp, &m_BitMapRect, &Player))
+	RECT tmp = Player->GetRect();
+	if (IntersectRect(&m_Recttmp, &m_BitMapRect, &tmp))
 	{
 		m_bCollider = true;
 	}
@@ -220,14 +205,22 @@ void Obstacle::ColliderCheck(RECT Player)
 		m_bCollider = false;
 }
 
-void Obstacle::ColliderScoreCheck(RECT Player)
+void Obstacle::ColliderScoreCheck(float deltaTime, Character* Player, int index)
 {
-	if (IntersectRect(&m_Recttmp, &m_ScoreRect, &Player))
+	RECT tmp = Player->GetRect();
+	if (IntersectRect(&m_Recttmp, &m_ScoreRect, &tmp))
 	{
-		m_bColliderScore = true;
+		//m_fTime += deltaTime;
+		m_bColliderScore[index] = true;
+		
+		if(m_bColliderScore[3] == true)
+			Player->PlusScore(200);
+		else
+			Player->PlusScore(100);
+		
 	}
-	else
-		m_bColliderScore = false;
+	/*else
+		m_bColliderScore = false;*/
 }
 
 void Obstacle::Reset()
@@ -238,6 +231,8 @@ void Obstacle::Reset()
 
 	m_iRingx = SIZE_MAPX;
 	m_iRingx2 = SIZE_MAPX + 500;
+	for (int i = 0; i < 4; i++)
+		m_bColliderScore[i] = false;
 }
 
 Obstacle::~Obstacle()
