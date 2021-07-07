@@ -133,6 +133,7 @@ void GameManager::Update(float deltaTime, int iCheck, HWND g_hwnd)
                     m_BackGround->Reset();
                     m_Obstacle->Reset();
                     m_iBonusScore = 10000;
+                    m_Player->ResetLife();
                 }
             }
         }

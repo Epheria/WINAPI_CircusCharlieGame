@@ -80,7 +80,8 @@ void Map::MapDraw(HDC hdc)
 			sprintf_s(buf, "%d", m_iMeter);
 			m_pBitMap[BACKGROUND_METER]->Draw(hdc, m_ix + x, 350, true);
 			TextOutA(hdc, m_ix + x + 10, 355, buf, strlen(buf));
-			sprintf_s(buf, "%d", m_iMeter - 10);
+			ZeroMemory(buf, sizeof(buf));
+			sprintf_s(buf, "%d", m_iMeter2);
 			m_pBitMap[BACKGROUND_METER]->Draw(hdc, m_ix2 + x, 350, true);
 			TextOutA(hdc, m_ix2 + x + 10, 355, buf, strlen(buf));
 		}
@@ -144,10 +145,12 @@ void Map::MapDraw(HDC hdc)
 
 void Map::MeterCheck(int MovedLen)
 {
-	int x = MovedLen * 0.001;
-	m_iMeter = (10 - x) * 10;
-	//if (MovedLen == 1000 || MovedLen == 2000 || MovedLen == 3000 || MovedLen == 4000 || MovedLen == 5000)
-	//	iCur++;
+	int x = (m_imoveLen - 40) * 0.001;
+	if (m_imoveLen <= 1000)
+		m_iMeter = (10 - x) * 10;
+	else
+		m_iMeter = (10 - x - 1) * 10;
+	m_iMeter2 = (10 - x - 1) * 10;
 }
 
 void Map::Reset()

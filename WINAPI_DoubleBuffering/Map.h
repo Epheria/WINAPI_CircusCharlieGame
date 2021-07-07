@@ -28,7 +28,7 @@ private:
 	int m_iy;
 	int iCur;
 	int m_iMaxMapDraw;
-	float m_iMeter;
+	int m_iMeter, m_iMeter2;
 	int m_iBonusScore;
 	int m_iScore;
 	int m_iLife;

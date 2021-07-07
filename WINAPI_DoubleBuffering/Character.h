@@ -20,7 +20,7 @@ enum DIRECTION
 	DIR_LEFT = -1
 };
 
-#define Debug_Rect
+//#define Debug_Rect
 
 class Character
 {
