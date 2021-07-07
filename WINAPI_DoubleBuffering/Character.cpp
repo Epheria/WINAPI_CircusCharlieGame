@@ -9,6 +9,7 @@ Character::Character()
 	m_eCharacterState = MOVE_IDLE;
 	m_bControl = false;
     m_bIsJump = false;
+    m_bAnim = false;
     m_iSjump = 0;
     m_iMovedLength = 0;
     m_iScore = 0;
@@ -21,6 +22,8 @@ void Character::Init(int x, int y)
 	m_pBitMap[MOVE_IDLE] = BitMapManager::GetInstance()->GetImage(IMAGE_PLAYER_1);
 	m_pBitMap[MOVE_BACK] = BitMapManager::GetInstance()->GetImage(IMAGE_PLAYER_2);
 	m_pBitMap[MOVE_DIE] = BitMapManager::GetInstance()->GetImage(IMAGE_PLAYER_6);
+	m_pBitMap[MOVE_GOAL1] = BitMapManager::GetInstance()->GetImage(IMAGE_PLAYER_4);
+	m_pBitMap[MOVE_GOAL2] = BitMapManager::GetInstance()->GetImage(IMAGE_PLAYER_5);
 	m_ix = x;
 	m_iy = y;
 	m_BitMapRect.left = x;
@@ -41,6 +44,18 @@ void Character::Draw(HDC hdc)
 void Character::DrawDie(HDC hdc)
 {
     m_pBitMap[MOVE_DIE]->Draw(hdc, m_ix, m_iy);
+}
+
+void Character::DrawGoal(HDC hdc)
+{
+    if (m_bAnim == true)
+    {
+        m_pBitMap[MOVE_GOAL1]->Draw(hdc, m_ix, m_iy);
+    }
+    else
+    {
+        m_pBitMap[MOVE_GOAL2]->Draw(hdc, m_ix, m_iy);
+    }
 }
 
 void Character::RectUpdate()
@@ -101,6 +116,15 @@ void Character::PlayerUpdate(float deltaTime, int iCheck)
         default:
             m_eCharacterState = MOVE_IDLE;
         }
+    }
+
+    if (1.0f <= m_fTime)
+    {
+        m_fTime = 0;
+        if (m_bAnim == false)
+            m_bAnim = true;
+        else
+            m_bAnim = false;
     }
     RectUpdate();
 }

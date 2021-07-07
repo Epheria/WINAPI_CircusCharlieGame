@@ -11,8 +11,10 @@ Map::Map()
 	m_ix2 = 0;
 	m_iBonusScore = 10000;
 	m_iScore = 0;
+	iCur = 0;
 	m_fTime = 0;
 	m_bAnim = false;
+	m_bIsGoal = false;
 }
 
 void Map::Init(BACKGROUND Index, int x, int y)
@@ -32,7 +34,7 @@ void Map::Init(BACKGROUND Index, int x, int y)
 	m_ix2 = m_ix + m_iBackGroundLen;
 }
 
-void Map::Update(float deltaTime, int MovedLen, int Life, int iBonusScore, int pScore, int pLife)
+void Map::Update(float deltaTime, int MovedLen, int Life, int iBonusScore, int pScore, int pLife, bool flag)
 {
 	m_fTime += deltaTime;
 	if (1.0f <= m_fTime)
@@ -49,6 +51,7 @@ void Map::Update(float deltaTime, int MovedLen, int Life, int iBonusScore, int p
 	m_iBonusScore = iBonusScore;
 	m_iScore = pScore;
 	m_iLife = pLife;
+	m_bIsGoal = flag;
 }
 
 void Map::MapDraw(HDC hdc)
@@ -77,7 +80,6 @@ void Map::MapDraw(HDC hdc)
 			sprintf_s(buf, "%d", m_iMeter);
 			m_pBitMap[BACKGROUND_METER]->Draw(hdc, m_ix + x, 350, true);
 			TextOutA(hdc, m_ix + x + 10, 355, buf, strlen(buf));
-
 			sprintf_s(buf, "%d", m_iMeter - 10);
 			m_pBitMap[BACKGROUND_METER]->Draw(hdc, m_ix2 + x, 350, true);
 			TextOutA(hdc, m_ix2 + x + 10, 355, buf, strlen(buf));
@@ -90,17 +92,17 @@ void Map::MapDraw(HDC hdc)
 		}
 		else
 		{
-			if (m_iPlayerMovedLen >= 4000 && m_bAnim == true)
+			if (m_bIsGoal == true && m_bAnim == true)
 			{
 				m_pBitMap[BACKGROUND_BACK2]->Draw(hdc, m_ix + x, m_iy, false);
 				m_pBitMap[BACKGROUND_BACK2]->Draw(hdc, m_ix2 + x, m_iy, false);
 			}
-			else if (m_iPlayerMovedLen >= 4000 && m_bAnim == false)
+			else if (m_bIsGoal == true && m_bAnim == false)
 			{
 				m_pBitMap[BACKGROUND_BACK3]->Draw(hdc, m_ix + x - 2, m_iy + 2, false);
 				m_pBitMap[BACKGROUND_BACK3]->Draw(hdc, m_ix2 + x - 2, m_iy + 2, false);
 			}
-			else
+			else if (m_bIsGoal == false)
 			{
 				m_pBitMap[BACKGROUND_BACK2]->Draw(hdc, m_ix + x, m_iy, false);
 				m_pBitMap[BACKGROUND_BACK2]->Draw(hdc, m_ix2 + x, m_iy, false);
@@ -110,7 +112,6 @@ void Map::MapDraw(HDC hdc)
 		m_pBitMap[BACKGROUND_TRACK]->Draw(hdc, m_ix + x, m_iy, false);
 		m_pBitMap[BACKGROUND_TRACK]->Draw(hdc, m_ix2 + x, m_iy, false);
 	}
-
 	//for (int i = 0; 2 > i; i++)
 	//{
 	//	m_ix = icx - m_imoveLen;
@@ -143,8 +144,10 @@ void Map::MapDraw(HDC hdc)
 
 void Map::MeterCheck(int MovedLen)
 {
-	int x = MovedLen / 1000;
+	int x = MovedLen * 0.001;
 	m_iMeter = (10 - x) * 10;
+	//if (MovedLen == 1000 || MovedLen == 2000 || MovedLen == 3000 || MovedLen == 4000 || MovedLen == 5000)
+	//	iCur++;
 }
 
 void Map::Reset()
@@ -152,6 +155,19 @@ void Map::Reset()
 	m_imoveLen = 0;
 	m_ix = 0;
 	m_ix2 = m_ix + m_iBackGroundLen;
+}
+
+void Map::DrawGoal(HDC hdc)
+{
+	int iTotalScore = m_iBonusScore + m_iScore;
+	char buf[256];
+	ZeroMemory(buf, sizeof(buf));
+
+	m_pBitMap[BACKGROUND_INTERFACE]->Draw(hdc, 200, 20, true);
+	sprintf_s(buf, "! ! ½Â ¸® ! !");
+	TextOutA(hdc, 400, 40, buf, strlen(buf));
+	sprintf_s(buf, "TotalScore : %d", iTotalScore);
+	TextOutA(hdc, 700, 40, buf, strlen(buf));
 }
 
 Map::~Map()

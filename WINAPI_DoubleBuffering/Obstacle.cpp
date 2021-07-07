@@ -6,6 +6,7 @@ Obstacle::Obstacle()
 	m_fTime = 0;
 	m_imoveLen = 0;
 	m_bCollider = false;
+	m_bIsGoal = false;
 	for (int i = 0; i < 4; i++)
 		m_bColliderScore[i] = false;
 }
@@ -59,17 +60,19 @@ void Obstacle::Update(float deltaTime)
 	}
 
 	// 작은링, 큰링 두개의 위치가 0이되면 다시 맵의 오른쪽 끝에 그려주기
-	if (0 >= m_iRingx)
+	if (m_bIsGoal == false)
 	{
-		m_iRingx = SIZE_MAPX;
-		m_bColliderScore[2] = false;
+		if (0 >= m_iRingx)
+		{
+			m_iRingx = SIZE_MAPX;
+			m_bColliderScore[2] = false;
+		}
+		if (0 >= m_iRingx2)
+		{
+			m_iRingx2 = SIZE_MAPX;
+			m_bColliderScore[3] = false;
+		}
 	}
-	if (0 >= m_iRingx2)
-	{
-		m_iRingx2 = SIZE_MAPX;
-		m_bColliderScore[3] = false;
-	}
-
 	/*m_fTime += deltaTime;
 	if (5.0f <= m_fTime)
 	{
@@ -91,6 +94,17 @@ void Obstacle::SetRect(RECT& rect, int left, int right, int top, int bottom)
 
 void Obstacle::RectUpdate(float deltaTime, HDC hdc, int x, Character* Player)
 {
+	if (m_imoveLen >= 3900)
+	{
+		SetRect(m_GoalRect, 1000, 100, 300, 100);
+		ColliderGoalCheck(Player);
+		if (m_bIsGoal == true)
+			return;
+#ifdef Debug_Rect
+		Rectangle(hdc, m_GoalRect.left + 5, m_GoalRect.top + 5, m_GoalRect.right - 5, m_GoalRect.bottom);
+#endif // Debug_Rect
+	}
+
 	for (int i = 0; i < 4; i++)
 	{
 		switch (i)
@@ -180,17 +194,20 @@ void Obstacle::ObstacleDraw(float deltaTime, HDC hdc, Character* Player)
 		//	m_pBitMap[OBS_FIRE2]->Draw(hdc, m_ix2 + x, m_iy, true);
 		//}
 
-		m_iy = 170;
-		STATE = m_bAnim ? OBS_RING1 : OBS_RING3;
-		m_pBitMap[STATE]->Draw(hdc, m_iRingx, m_iy);
-		m_pBitMap[STATE + 1]->Draw(hdc, m_iRingx + 26, m_iy);
+		if (m_bIsGoal == false)
+		{
+			m_iy = 170;
+			STATE = m_bAnim ? OBS_RING1 : OBS_RING3;
+			m_pBitMap[STATE]->Draw(hdc, m_iRingx, m_iy);
+			m_pBitMap[STATE + 1]->Draw(hdc, m_iRingx + 26, m_iy);
 
-		m_iy = 170;
-		m_pBitMap[OBS_LITTLERING1]->Draw(hdc, m_iRingx2, m_iy);
-		m_pBitMap[OBS_LITTLERING2]->Draw(hdc, m_iRingx2 + 26, m_iy);
+			m_iy = 170;
+			m_pBitMap[OBS_LITTLERING1]->Draw(hdc, m_iRingx2, m_iy);
+			m_pBitMap[OBS_LITTLERING2]->Draw(hdc, m_iRingx2 + 26, m_iy);
 
-		if(m_bColliderScore[3] == false)
-			m_pBitMap[OBS_CASH]->Draw(hdc, m_iRingx2 + 10, m_iy + 20);
+			if (m_bColliderScore[3] == false)
+				m_pBitMap[OBS_CASH]->Draw(hdc, m_iRingx2 + 10, m_iy + 20);
+		}
 	}
 }
 
@@ -203,6 +220,17 @@ void Obstacle::ColliderCheck(Character* Player)
 	}
 	else
 		m_bCollider = false;
+}
+
+void Obstacle::ColliderGoalCheck(Character* Player)
+{
+	RECT tmp = Player->GetRect();
+	if (IntersectRect(&m_Recttmp, &m_GoalRect, &tmp))
+	{
+		m_bIsGoal = true;
+	}
+	else
+		m_bIsGoal = false;
 }
 
 void Obstacle::ColliderScoreCheck(float deltaTime, Character* Player, int index)
@@ -233,6 +261,7 @@ void Obstacle::Reset()
 	m_iRingx2 = SIZE_MAPX + 500;
 	for (int i = 0; i < 4; i++)
 		m_bColliderScore[i] = false;
+	m_bIsGoal = false;
 }
 
 Obstacle::~Obstacle()

@@ -25,7 +25,7 @@ void GameManager::Init(HWND hWnd)
     m_Obstacle->Init(OBS_FIRE1, 0, 0);
 }
 
-void GameManager::Update(float deltaTime, int iCheck)
+void GameManager::Update(float deltaTime, int iCheck, HWND g_hwnd)
 {
     switch (m_CurrSelectState)
     {
@@ -49,6 +49,7 @@ void GameManager::Update(float deltaTime, int iCheck)
         break;
     case SELECT_PLAY1:
     case SELECT_PLAY2:
+    case SELECT_GOAL:
     {
         //if (m_Obstacle->ColliderCheck(m_Player->GetRect()))
         //{
@@ -57,7 +58,6 @@ void GameManager::Update(float deltaTime, int iCheck)
 
         int x = m_Player->GetDistx(deltaTime);
         int x_ring = 30 * deltaTime;
-        m_iBonusScore -= deltaTime;
 
         if (!m_Player->GetJumpStatus())
         {
@@ -111,14 +111,33 @@ void GameManager::Update(float deltaTime, int iCheck)
         m_Player->UdpateMovedLength(m_BackGround->GetMoveLenx());
         m_Player->PlayerUpdate(deltaTime, iCheck);
 
-        m_BackGround->Update(deltaTime, m_Player->GetMovedLength(), 0, m_iBonusScore, m_Player->GetScore(), m_Player->GetLife());
-
+        m_BackGround->Update(deltaTime, m_Player->GetMovedLength(), 0, m_iBonusScore, m_Player->GetScore(), m_Player->GetLife(), m_Obstacle->GetGoalCollider());
+        
         //m_fTime2 += deltaTime;
         //if (1.5f <= m_fTime2 && true == m_Obstacle->GetColliderScore())
         //{
         //    m_fTime2 = 0;
         //    m_Player->PlusScore(100);
         //}
+
+        if (m_Obstacle->GetGoalCollider())
+        {
+            m_fTime += deltaTime;
+            if (5.0f <= m_fTime)
+            {
+                if (MessageBox(g_hwnd, L"축하합니다! ok를 누르시면 계속진행됩니다.", L"!!게임 승리!!", MB_OK) == IDOK)
+                {
+                    m_fTime = 0;
+                    m_CurrSelectState = SELECT_DEFAULT;
+                    m_Player->Reset();
+                    m_BackGround->Reset();
+                    m_Obstacle->Reset();
+                    m_iBonusScore = 10000;
+                }
+            }
+        }
+        else
+            m_iBonusScore -= deltaTime;
 
         break;
     }
@@ -142,7 +161,7 @@ void GameManager::Update(float deltaTime, int iCheck)
             m_Player->ResetLife();
         }
 
-        break;
+        break;      
     }
 }
 
@@ -176,6 +195,7 @@ void GameManager::Draw(float deltaTime, HWND hWnd, HDC hdc)
         break;
     case SELECT_PLAY1:
     case SELECT_PLAY2:
+    case SELECT_GOAL:
     case SELECT_GAMEOVER:
     
         char buf[256];
@@ -186,6 +206,8 @@ void GameManager::Draw(float deltaTime, HWND hWnd, HDC hdc)
 
         if (m_CurrSelectState == SELECT_GAMEOVER)
             m_Player->DrawDie(backDC);
+        else if (m_CurrSelectState == SELECT_GOAL)
+            m_Player->DrawGoal(backDC);
         else
             m_Player->Draw(backDC);
 
@@ -197,6 +219,12 @@ void GameManager::Draw(float deltaTime, HWND hWnd, HDC hdc)
             m_CurrSelectState = SELECT_GAMEOVER;
         }
         
+        if (true == m_Obstacle->GetGoalCollider())
+        {
+            m_CurrSelectState = SELECT_GOAL;
+            m_BackGround->DrawGoal(backDC);
+        }
+
         sprintf_s(buf, "이동 거리 : %d, 점프 높이 : %d", m_Player->GetMovedLength() , m_Player->GetPosy());
         TextOutA(backDC, 100, 50, buf, strlen(buf));
 

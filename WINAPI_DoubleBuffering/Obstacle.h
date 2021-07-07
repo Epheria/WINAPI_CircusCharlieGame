@@ -26,6 +26,7 @@ private:
 	OBSTACLE m_eObstacleState;
 	BitMap* m_pBitMap[OBS_END];
 	RECT m_BitMapRect;
+	RECT m_GoalRect;
 	RECT m_ScoreRect;
 	RECT m_CheckRect;
 	float m_fTime;
@@ -39,6 +40,7 @@ private:
 	int m_iy;
 	bool m_bAnim;
 	bool m_bCollider;
+	bool m_bIsGoal;
 	bool m_bColliderScore[4];
 	RECT m_Recttmp;
 public:
@@ -99,6 +101,10 @@ public:
 	{
 		return m_bCollider;
 	}
+	bool GetGoalCollider()
+	{
+		return m_bIsGoal;
+	}
 	bool GetColliderScore()
 	{
 		return m_bColliderScore;
@@ -108,6 +114,7 @@ public:
 	void RectUpdate(float deltaTime, HDC hdc, int x, Character* Player);
 	void ObstacleDraw(float deltaTime, HDC hdc, Character* Player);
 	void ColliderCheck(Character* Player);
+	void ColliderGoalCheck(Character* Player);
 	void ColliderScoreCheck(float deltaTime, Character* Player, int index);
 	void SetRect(RECT& rect, int left, int right, int top, int bottom);
 	void Reset();

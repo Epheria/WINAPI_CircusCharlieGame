@@ -26,14 +26,16 @@ private:
 	int m_ix;
 	int m_ix2;
 	int m_iy;
+	int iCur;
 	int m_iMaxMapDraw;
-	int m_iMeter;
+	float m_iMeter;
 	int m_iBonusScore;
 	int m_iScore;
 	int m_iLife;
 	float m_fTime;
 	bool m_bAnim;
 	bool m_bControl;
+	bool m_bIsGoal;
 public:
 	Map();
 	void SetMapState(BACKGROUND Index)
@@ -87,9 +89,10 @@ public:
 		//	m_imoveLen = 5000;
 	}
 	void Init(BACKGROUND Index, int x, int y);
-	void Update(float deltaTime, int MovedLen, int Life, int iBonusScore, int pScore, int pLife);
+	void Update(float deltaTime, int MovedLen, int Life, int iBonusScore, int pScore, int pLife, bool m_bIsGoal);
 	void MeterCheck(int MovedLen);
 	void MapDraw(HDC hdc);
+	void DrawGoal(HDC hdc);
 	void Reset();
 	~Map();
 };

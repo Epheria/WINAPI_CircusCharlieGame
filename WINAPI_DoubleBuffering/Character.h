@@ -8,6 +8,8 @@ enum MOVE_STATUS
 	MOVE_IDLE,
 	MOVE_BACK,
 	MOVE_DIE,
+	MOVE_GOAL1,
+	MOVE_GOAL2,
 	MOVE_END
 };
 
@@ -36,6 +38,7 @@ private:
 	int m_iSjump;
 	int m_iLife;
 	int m_iScore;
+	bool m_bAnim;
 	bool m_bIsJump;
 	bool m_bControl;
 	RECT m_BitMapRect;
@@ -158,6 +161,7 @@ public:
 	void Reset();
 	void Draw(HDC hdc);
 	void DrawDie(HDC hdc);
+	void DrawGoal(HDC hdc);
 	bool DeatCheck();
 	~Character();
 };

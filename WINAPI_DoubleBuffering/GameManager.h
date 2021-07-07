@@ -13,6 +13,7 @@ enum SELECT
 	SELECT_DEFAULT = -1,
 	SELECT_PLAY1,
 	SELECT_PLAY2,
+	SELECT_GOAL,
 	SELECT_GAMEOVER
 };
 
@@ -36,7 +37,7 @@ public:
 			m_hThis = new GameManager;
 		return m_hThis;
 	}
-	void Update(float deltaTime, int iCheck);
+	void Update(float deltaTime, int iCheck, HWND g_hwnd);
 	void Draw(float deltaTime, HWND hWnd, HDC hdc);
 	void Init(HWND hWnd);
 	bool FinalLineCheck(int x);
