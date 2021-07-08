@@ -31,6 +31,7 @@ private:
 	RECT m_CheckRect;
 	float m_fTime;
 	int m_imoveLen;
+	int m_iPlayerMovedLen;
 	int m_iBackGroundLen;
 	int m_iMaxMapDraw;
 	int m_ix;
@@ -52,9 +53,9 @@ public:
 	}
 	void UpdateMoveLenx(int x, int x_ring)
 	{
-		m_imoveLen += x;
 		m_ix -= x;
 		m_ix2 -= x;
+		m_imoveLen += x;
 
 		m_iRingx -= x_ring + x;
 		m_iRingx2 -= x_ring + x;
@@ -87,7 +88,6 @@ public:
 				m_ix2 = m_ix - m_iBackGroundLen;
 			}
 		}
-
 		//if (m_imoveLen <= 0)
 		//	m_imoveLen = 0;
 		//if (m_imoveLen >= 5000)
@@ -109,7 +109,7 @@ public:
 	{
 		return m_bColliderScore;
 	}
-	void Update(float deltaTime);
+	void Update(float deltaTime, int iPlayerMovedLen);
 	void Init(OBSTACLE Index, int x, int y);
 	void RectUpdate(float deltaTime, HDC hdc, int x, Character* Player);
 	void ObstacleDraw(float deltaTime, HDC hdc, Character* Player);

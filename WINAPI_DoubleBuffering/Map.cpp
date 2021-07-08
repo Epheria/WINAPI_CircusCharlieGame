@@ -15,6 +15,7 @@ Map::Map()
 	m_fTime = 0;
 	m_bAnim = false;
 	m_bIsGoal = false;
+	MeterCreate();
 }
 
 void Map::Init(BACKGROUND Index, int x, int y)
@@ -46,7 +47,6 @@ void Map::Update(float deltaTime, int MovedLen, int Life, int iBonusScore, int p
 			m_bAnim = false;
 	}
 
-	MeterCheck(MovedLen);
 	m_iPlayerMovedLen = MovedLen;
 	m_iBonusScore = iBonusScore;
 	m_iScore = pScore;
@@ -59,15 +59,27 @@ void Map::MapDraw(HDC hdc)
 	char buf[256];
 	ZeroMemory(buf, sizeof(buf));
 
-	m_pBitMap[BACKGROUND_INTERFACE]->Draw(hdc, 200, 20, true);
+	m_pBitMap[BACKGROUND_INTERFACE]->Draw(hdc, 200, 20);
 	sprintf_s(buf, "Score : %d", m_iScore);
 	TextOutA(hdc, 400, 40, buf, strlen(buf));
+	ZeroMemory(buf, sizeof(buf));
 	sprintf_s(buf, "BonusScore : %d", m_iBonusScore);
 	TextOutA(hdc, 700, 40, buf, strlen(buf));
 
 	for (int i = 0; i < m_iLife; i++)
 	{
-		m_pBitMap[BACKGROUND_LIFE]->Draw(hdc, 850 + i*15, 50, true);
+		m_pBitMap[BACKGROUND_LIFE]->Draw(hdc, 850 + i * 15, 50);
+	}
+
+	for (int i = 0; i < MeterList.size(); i+=2)
+	{
+		m_pBitMap[BACKGROUND_METER]->Draw(hdc, m_ix, 350);
+		//TextOutA(hdc, m_ix +10, 355, MeterList[i], strlen(MeterList[i]));
+	}
+	for (int i = 1; i < MeterList.size(); i+=2)
+	{
+		m_pBitMap[BACKGROUND_METER]->Draw(hdc, m_ix2, 350);
+		//TextOutA(hdc, m_ix2 + 10, 355, MeterList[i], strlen(MeterList[i]));
 	}
 
 	for (int i = 0; i <= m_iMaxMapDraw; i++)
@@ -75,44 +87,34 @@ void Map::MapDraw(HDC hdc)
 		m_iy = 100;
 		auto x = 66 * i;
 
-		if (i == 0)
-		{
-			sprintf_s(buf, "%d", m_iMeter);
-			m_pBitMap[BACKGROUND_METER]->Draw(hdc, m_ix + x, 350, true);
-			TextOutA(hdc, m_ix + x + 10, 355, buf, strlen(buf));
-			ZeroMemory(buf, sizeof(buf));
-			sprintf_s(buf, "%d", m_iMeter2);
-			m_pBitMap[BACKGROUND_METER]->Draw(hdc, m_ix2 + x, 350, true);
-			TextOutA(hdc, m_ix2 + x + 10, 355, buf, strlen(buf));
-		}
+		//if (i == 1)
+		//{
+		//	ZeroMemory(buf, sizeof(buf));
+		//	sprintf_s(buf, "%d", m_iMeter);
+		//	m_pBitMap[BACKGROUND_METER]->Draw(hdc, m_ix + x, 350);
+		//	TextOutA(hdc, m_ix + x + 10, 355, buf, strlen(buf));
+
+		//	ZeroMemory(buf, sizeof(buf));
+		//	sprintf_s(buf, "%d", m_iMeter2);
+		//	m_pBitMap[BACKGROUND_METER]->Draw(hdc, m_ix2 + x, 350);
+		//	TextOutA(hdc, m_ix2 + x + 10, 355, buf, strlen(buf));
+		//}
 
 		if (i == 7)
-		{
-			m_pBitMap[BACKGROUND_BACK1]->Draw(hdc, m_ix + x, m_iy, false);
-			m_pBitMap[BACKGROUND_BACK1]->Draw(hdc, m_ix2 + x, m_iy, false);
-		}
+			m_pBitMap[BACKGROUND_BACK1]->Draw(hdc, m_ix + x, m_ix2 + x, m_iy, false);
 		else
 		{
 			if (m_bIsGoal == true && m_bAnim == true)
-			{
-				m_pBitMap[BACKGROUND_BACK2]->Draw(hdc, m_ix + x, m_iy, false);
-				m_pBitMap[BACKGROUND_BACK2]->Draw(hdc, m_ix2 + x, m_iy, false);
-			}
+				m_pBitMap[BACKGROUND_BACK2]->Draw(hdc, m_ix + x, m_ix2 + x, m_iy, false);
 			else if (m_bIsGoal == true && m_bAnim == false)
-			{
-				m_pBitMap[BACKGROUND_BACK3]->Draw(hdc, m_ix + x - 2, m_iy + 2, false);
-				m_pBitMap[BACKGROUND_BACK3]->Draw(hdc, m_ix2 + x - 2, m_iy + 2, false);
-			}
+				m_pBitMap[BACKGROUND_BACK3]->Draw(hdc, m_ix + x - 2, m_ix2 + x - 2, m_iy + 2, false);
 			else if (m_bIsGoal == false)
-			{
-				m_pBitMap[BACKGROUND_BACK2]->Draw(hdc, m_ix + x, m_iy, false);
-				m_pBitMap[BACKGROUND_BACK2]->Draw(hdc, m_ix2 + x, m_iy, false);
-			}
+				m_pBitMap[BACKGROUND_BACK2]->Draw(hdc, m_ix + x, m_ix2 + x, m_iy, false);
 		}
 		m_iy = 165;
-		m_pBitMap[BACKGROUND_TRACK]->Draw(hdc, m_ix + x, m_iy, false);
-		m_pBitMap[BACKGROUND_TRACK]->Draw(hdc, m_ix2 + x, m_iy, false);
+		m_pBitMap[BACKGROUND_TRACK]->Draw(hdc, m_ix + x, m_ix2 + x, m_iy, false);
 	}
+
 	//for (int i = 0; 2 > i; i++)
 	//{
 	//	m_ix = icx - m_imoveLen;
@@ -143,14 +145,18 @@ void Map::MapDraw(HDC hdc)
 	//}
 }
 
-void Map::MeterCheck(int MovedLen)
+void Map::MeterCreate()
 {
-	int x = (m_imoveLen - 40) * 0.001;
-	if (m_imoveLen <= 1000)
-		m_iMeter = (10 - x) * 10;
-	else
-		m_iMeter = (10 - x - 1) * 10;
-	m_iMeter2 = (10 - x - 1) * 10;
+	char buf[10];
+
+	for (int i = 0; i < 10; i++)
+	{
+		ZeroMemory(buf, sizeof(buf));
+
+		sprintf_s(buf, "%d", (10 - i) * 10);
+
+		MeterList.push_back((10 - i) * 10);
+	}
 }
 
 void Map::Reset()
@@ -166,7 +172,7 @@ void Map::DrawGoal(HDC hdc)
 	char buf[256];
 	ZeroMemory(buf, sizeof(buf));
 
-	m_pBitMap[BACKGROUND_INTERFACE]->Draw(hdc, 200, 20, true);
+	m_pBitMap[BACKGROUND_INTERFACE]->Draw(hdc, 200, 20);
 	sprintf_s(buf, "! ! ½Â ¸® ! !");
 	TextOutA(hdc, 400, 40, buf, strlen(buf));
 	sprintf_s(buf, "TotalScore : %d", iTotalScore);

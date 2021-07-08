@@ -1,18 +1,16 @@
 #pragma once
-#include <Windows.h>
-#include <string>
-#include <time.h>
-#include <vector>
 #include "Character.h"
 #include "Map.h"
 #include "Menu.h"
 #include "Obstacle.h"
+#include "Rank.h"
 
 enum SELECT
 {
 	SELECT_DEFAULT = -1,
 	SELECT_PLAY1,
 	SELECT_PLAY2,
+	SELECT_RANK,
 	SELECT_GOAL,
 	SELECT_GAMEOVER
 };
@@ -24,9 +22,11 @@ private:
 	Map* m_BackGround;
 	Menu* m_Menu;
 	Obstacle* m_Obstacle;
+	Rank* m_Rank;
 	char m_CurrSelectState;
 	char m_ctmp;
 	int m_iBonusScore;
+	int m_iTotalScore;
 	float m_fTime, m_fTime2;
 	bool m_bGameOver;
 	static GameManager* m_hThis;

@@ -16,13 +16,21 @@ void BitMap::Init(HDC hdc,char* FileName)
 	m_Size.cx = BitMap_Info.bmWidth;
 	m_Size.cy = BitMap_Info.bmHeight;
 }
-void BitMap::Draw(HDC hdc, int x, int y, bool isAlpha)
+void BitMap::Draw(HDC hdc, int x, int x2, int y, bool isAlpha)
 {
 	switch (isAlpha)
 	{
-	case true: TransparentBlt(hdc, x, y, m_Size.cx, m_Size.cy, MemDC, 0, 0, m_Size.cx, m_Size.cy, RGB(255, 0, 255)); break;
-	default: BitBlt(hdc, x, y, m_Size.cx, m_Size.cy, MemDC, 0, 0, SRCCOPY); break;
+	case true: 
+		TransparentBlt(hdc, x, y, m_Size.cx, m_Size.cy, MemDC, 0, 0, m_Size.cx, m_Size.cy, RGB(255, 0, 255));
+		TransparentBlt(hdc, x2, y, m_Size.cx, m_Size.cy, MemDC, 0, 0, m_Size.cx, m_Size.cy, RGB(255, 0, 255)); break;
+	default: 
+		BitBlt(hdc, x, y, m_Size.cx, m_Size.cy, MemDC, 0, 0, SRCCOPY);
+		BitBlt(hdc, x2, y, m_Size.cx, m_Size.cy, MemDC, 0, 0, SRCCOPY); break;
 	}
+}
+void BitMap::Draw(HDC hdc, int x, int y)
+{
+	TransparentBlt(hdc, x, y, m_Size.cx, m_Size.cy, MemDC, 0, 0, m_Size.cx, m_Size.cy, RGB(255, 0, 255));
 }
 void BitMap::DrawBackGround(HDC hdc, int x, int y)
 {

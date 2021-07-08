@@ -8,6 +8,7 @@ GameManager::GameManager()
 	m_BackGround = new Map;
     m_Menu = new Menu;
     m_Obstacle = new Obstacle;
+    m_Rank = new Rank;
     m_ctmp = 0;
     m_CurrSelectState = SELECT_DEFAULT;
     m_iBonusScore = 10000;
@@ -49,6 +50,9 @@ void GameManager::Update(float deltaTime, int iCheck, HWND g_hwnd)
         break;
     case SELECT_PLAY1:
     case SELECT_PLAY2:
+   /* case SELECT_RANK:
+
+        break;*/
     case SELECT_GOAL:
     {
         //if (m_Obstacle->ColliderCheck(m_Player->GetRect()))
@@ -91,7 +95,7 @@ void GameManager::Update(float deltaTime, int iCheck, HWND g_hwnd)
         //else
         //    m_Player->UpdatePosx(x);
 
-        m_Obstacle->Update(deltaTime);
+        m_Obstacle->Update(deltaTime, m_Player->GetMovedLength());
 
         if (FinalLineCheck(x))
         {
@@ -100,7 +104,7 @@ void GameManager::Update(float deltaTime, int iCheck, HWND g_hwnd)
         }
         else
         {
-            if (m_Player->GetMovedLength() <= 0)
+            if (m_Player->GetMovedLength() < 0)
             {
                 x = 1;
             }
@@ -260,4 +264,5 @@ GameManager::~GameManager()
 	delete m_BackGround;
     delete m_Menu;
     delete m_Obstacle;
+    delete m_Rank;
 }

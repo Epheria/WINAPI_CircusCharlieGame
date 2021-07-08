@@ -47,7 +47,7 @@ void Obstacle::Init(OBSTACLE Index, int x, int y)
 	m_iRingx2 = SIZE_MAPX + 500;
 }
 
-void Obstacle::Update(float deltaTime)
+void Obstacle::Update(float deltaTime, int iPlayerMovedLen)
 {
 	m_fTime += deltaTime;
 	if (1.0f <= m_fTime)
@@ -73,6 +73,8 @@ void Obstacle::Update(float deltaTime)
 			m_bColliderScore[3] = false;
 		}
 	}
+
+	m_iPlayerMovedLen = iPlayerMovedLen;
 	/*m_fTime += deltaTime;
 	if (5.0f <= m_fTime)
 	{

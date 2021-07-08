@@ -20,6 +20,7 @@ class Map
 private:
 	BACKGROUND m_eMapState;
 	BitMap* m_pBitMap[BACKGROUND_END];
+	std::vector<int> MeterList;
 	int m_imoveLen;
 	int m_iPlayerMovedLen;
 	int m_iBackGroundLen;
@@ -54,6 +55,10 @@ public:
 	{
 		return m_imoveLen;
 	}
+	int GetTotalScore()
+	{
+		return m_iBonusScore + m_iScore;
+	}
 	void UpdateMoveLenx(int x)
 	{
 		m_imoveLen += x;
@@ -81,16 +86,16 @@ public:
 			{
 				m_ix2 = m_ix - m_iBackGroundLen;
 			}
-		}
-
-		//if (m_imoveLen <= 0)
-		//	m_imoveLen = 0;
-		//if (m_imoveLen >= 5000)
-		//	m_imoveLen = 5000;
+		
 	}
+	//if (m_imoveLen <= 0)
+	//	m_imoveLen = 0;
+	//if (m_imoveLen >= 5000)
+	//	m_imoveLen = 5000; 
+}
 	void Init(BACKGROUND Index, int x, int y);
 	void Update(float deltaTime, int MovedLen, int Life, int iBonusScore, int pScore, int pLife, bool m_bIsGoal);
-	void MeterCheck(int MovedLen);
+	void MeterCreate();
 	void MapDraw(HDC hdc);
 	void DrawGoal(HDC hdc);
 	void Reset();

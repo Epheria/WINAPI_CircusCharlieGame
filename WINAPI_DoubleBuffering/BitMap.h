@@ -19,7 +19,8 @@ private:
 	SIZE m_Size;
 public:
 	void Init(HDC hdc,char* FileName);
-	void Draw(HDC hdc, int x, int y, bool isAlpha = true);
+	void Draw(HDC hdc, int x, int x2, int y, bool isAlpha);
+	void Draw(HDC hdc, int x, int y);
 	void DrawBackGround(HDC hdc, int x, int y);
 	inline SIZE GetSize()
 	{
