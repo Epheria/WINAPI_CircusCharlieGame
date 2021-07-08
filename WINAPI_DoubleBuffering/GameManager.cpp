@@ -24,6 +24,7 @@ void GameManager::Init(HWND hWnd)
     m_BackGround->Init(BACKGROUND_TRACK, 0, 0);
     m_Menu->Init(MENU_SELECT, 0, 0);
     m_Obstacle->Init(OBS_FIRE1, 0, 0);
+    m_Rank->Init();
 }
 
 void GameManager::Update(float deltaTime, int iCheck, HWND g_hwnd)
@@ -32,27 +33,38 @@ void GameManager::Update(float deltaTime, int iCheck, HWND g_hwnd)
     {
     case SELECT_DEFAULT:
         m_Menu->Update(deltaTime);
-        if (GetAsyncKeyState(VK_UP))
-        {
-            m_ctmp--;
-            if (0 > m_ctmp) m_ctmp = 0;
-        }
-        else if (GetAsyncKeyState(VK_DOWN))
-        {
-            m_ctmp++;
-            if (1 < m_ctmp) m_ctmp = 1;
-        }
 
-        if (GetAsyncKeyState(VK_RETURN))
+        m_fTime2 += deltaTime;
+        if (1.0f <= m_fTime2)
         {
-            m_CurrSelectState = m_ctmp;
+            m_fTime2 = 0;
+
+            if (GetAsyncKeyState(VK_UP))
+            {
+                m_ctmp--;
+                if (0 > m_ctmp) m_ctmp = 0;
+            }
+            else if (GetAsyncKeyState(VK_DOWN))
+            {
+                m_ctmp++;
+                if (2 < m_ctmp) m_ctmp = 2;
+            }
+
+            if (GetAsyncKeyState(VK_RETURN))
+            {
+                m_CurrSelectState = m_ctmp;
+            }
+        }
+        break;
+    case SELECT_RANK:
+        m_Rank->LoadRank();
+        if (m_Rank->MenuSelect(deltaTime))
+        {
+            m_CurrSelectState = SELECT_DEFAULT;
         }
         break;
     case SELECT_PLAY1:
     case SELECT_PLAY2:
-   /* case SELECT_RANK:
-
-        break;*/
     case SELECT_GOAL:
     {
         //if (m_Obstacle->ColliderCheck(m_Player->GetRect()))
@@ -131,6 +143,7 @@ void GameManager::Update(float deltaTime, int iCheck, HWND g_hwnd)
             {
                 if (MessageBox(g_hwnd, L"축하합니다! ok를 누르시면 계속진행됩니다.", L"!!게임 승리!!", MB_OK) == IDOK)
                 {
+                    m_Rank->SaveRank(m_iTotalScore);
                     m_fTime = 0;
                     m_CurrSelectState = SELECT_DEFAULT;
                     m_Player->Reset();
@@ -162,6 +175,7 @@ void GameManager::Update(float deltaTime, int iCheck, HWND g_hwnd)
 
         if (m_Player->GetLife() <= 0)
         {
+            m_Rank->SaveRank(m_iTotalScore);
             m_CurrSelectState = SELECT_DEFAULT;
             m_Player->ResetLife();
         }
@@ -197,6 +211,9 @@ void GameManager::Draw(float deltaTime, HWND hWnd, HDC hdc)
     {
     case SELECT_DEFAULT:
         m_Menu->Draw(backDC, m_ctmp);
+        break;
+    case SELECT_RANK:
+        m_Rank->RankDraw(backDC);
         break;
     case SELECT_PLAY1:
     case SELECT_PLAY2:
