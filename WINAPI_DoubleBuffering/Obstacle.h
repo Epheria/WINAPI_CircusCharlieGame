@@ -23,12 +23,10 @@ enum OBSTACLE
 class Obstacle
 {
 private:
-	OBSTACLE m_eObstacleState;
 	BitMap* m_pBitMap[OBS_END];
 	RECT m_BitMapRect;
 	RECT m_GoalRect;
 	RECT m_ScoreRect;
-	RECT m_CheckRect;
 	float m_fTime;
 	int m_imoveLen;
 	int m_iPlayerMovedLen;
@@ -88,14 +86,6 @@ public:
 				m_ix2 = m_ix - m_iBackGroundLen;
 			}
 		}
-		//if (m_imoveLen <= 0)
-		//	m_imoveLen = 0;
-		//if (m_imoveLen >= 5000)
-		//	m_imoveLen = 5000; 
-	}
-	RECT GetRect()
-	{
-		return m_BitMapRect;
 	}
 	bool GetColliderCheck()
 	{
@@ -104,10 +94,6 @@ public:
 	bool GetGoalCollider()
 	{
 		return m_bIsGoal;
-	}
-	bool GetColliderScore()
-	{
-		return m_bColliderScore;
 	}
 	void Update(float deltaTime, int iPlayerMovedLen);
 	void Init(OBSTACLE Index, int x, int y);

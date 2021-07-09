@@ -1,13 +1,9 @@
 #include "Rank.h"
 
-Rank::Rank() : m_eCurState(SELECT_DEFUALT), m_iMaxPage(0)
+Rank::Rank() : m_eCurState(SELECT_DEFUALT), m_iMaxPage(0), m_ctmp(0), m_iCurPageIndex(1), m_fTime(0),
+font(CreateFont(20, 0, 0, 0, 0, 0, 0, 0, HANGEUL_CHARSET, 0, 0, 0, 0, (LPCWSTR)"±Ã¼­"))
 {
-	m_iMaxPage = 0;
-	m_ctmp = 0;
-	m_iCurPageIndex = 1;
-	m_fTime = 0;
 	ZeroMemory(m_buf, sizeof(m_buf));
-	font = CreateFont(20, 0, 0, 0, 0, 0, 0, 0, HANGEUL_CHARSET, 0, 0, 0, 0, (LPCWSTR)"±Ã¼­");
 }
 
 void Rank::Init()
@@ -100,7 +96,7 @@ bool Rank::MenuSelect(float deltaTime)
 	case SELECT_EXIT:
 		m_ctmp = 0;
 		m_iCurPageIndex = 1;
-		m_eCurState = 0;
+		m_eCurState = 3;
 		RankList.clear();
 		return true;
 
@@ -112,7 +108,6 @@ bool Rank::MenuSelect(float deltaTime)
 
 void Rank::RankDraw(HDC hdc)
 {
-	//int index;
 	int index = 1 + (m_iCurPageIndex - 1) * 7;
 	std::string page = "<" + std::to_string(m_iCurPageIndex) + ">";
 

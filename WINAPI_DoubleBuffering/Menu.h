@@ -18,10 +18,7 @@ enum MENU
 class Menu
 {
 private:
-	MENU m_eMenuState;
 	BitMap* m_pBitMap[MENU_END];
-	int m_ix;
-	int m_iy;
 	float m_fTime;
 	char m_cAnim;
 	HFONT font;

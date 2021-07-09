@@ -1,10 +1,7 @@
 #include "Menu.h"
 
-Menu::Menu()
+Menu::Menu() : m_fTime(0), m_cAnim(0), font(CreateFont(35, 0, 0, 0, 0, 0, 0, 0, HANGEUL_CHARSET, 0, 0, 0, 0, (LPWSTR)"±Ã¼­"))
 {
-	m_fTime = 0;
-	m_cAnim = 0;
-	font = CreateFont(35, 0, 0, 0, 0, 0, 0, 0, HANGEUL_CHARSET, 0, 0, 0, 0, (LPWSTR)"±Ã¼­");
 }
 
 void Menu::Init(MENU Index, int x, int y)
@@ -20,8 +17,6 @@ void Menu::Init(MENU Index, int x, int y)
 			index = 26;
 		m_pBitMap[i] = BitMapManager::GetInstance()->GetImage((IMAGE)(i + index));
 	}
-	m_ix = x;
-	m_iy = y;
 }
 
 void Menu::Update(float deltaTime)

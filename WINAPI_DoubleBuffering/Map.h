@@ -18,16 +18,13 @@ enum BACKGROUND
 class Map
 {
 private:
-	BACKGROUND m_eMapState;
 	BitMap* m_pBitMap[BACKGROUND_END];
 	std::vector<int> MeterList;
 	int m_imoveLen;
-	int m_iPlayerMovedLen;
 	int m_iBackGroundLen;
 	int m_ix;
 	int m_ix2;
 	int m_iy;
-	int iCur;
 	int m_iMaxMapDraw;
 	int m_iMeter, m_iMeter2;
 	int m_iBonusScore;
@@ -35,22 +32,9 @@ private:
 	int m_iLife;
 	float m_fTime;
 	bool m_bAnim;
-	bool m_bControl;
 	bool m_bIsGoal;
 public:
 	Map();
-	void SetMapState(BACKGROUND Index)
-	{
-		m_eMapState = Index;
-	}
-	void UpdateControlState(bool flag)
-	{
-		m_bControl = flag;
-	}
-	bool GetControlState()
-	{
-		return m_bControl;
-	}
 	int GetMoveLenx()
 	{
 		return m_imoveLen;
@@ -88,10 +72,6 @@ public:
 			}
 		
 	}
-	//if (m_imoveLen <= 0)
-	//	m_imoveLen = 0;
-	//if (m_imoveLen >= 5000)
-	//	m_imoveLen = 5000; 
 }
 	void Init(BACKGROUND Index, int x, int y);
 	void Update(float deltaTime, int MovedLen, int Life, int iBonusScore, int pScore, int pLife, bool m_bIsGoal);

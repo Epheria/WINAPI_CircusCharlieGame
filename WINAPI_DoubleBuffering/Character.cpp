@@ -1,19 +1,8 @@
 #include "Character.h"
 
-Character::Character()
+Character::Character() : m_iJumpDirection(0), m_eDirection(DIRECTION::DIR_IDLE), m_fTime(0), m_fDeadTime(0), m_eCharacterState(MOVE_IDLE), m_bIsJump(false), m_bAnim(false),
+    m_iSjump(0), m_iMovedLength(0), m_iScore(0), m_iLife(4)
 {
-    m_iJumpDirection = 0;
-    m_eDirection = DIRECTION::DIR_IDLE;
-    m_fTime = 0;
-    m_fDeadTime = 0;
-	m_eCharacterState = MOVE_IDLE;
-	m_bControl = false;
-    m_bIsJump = false;
-    m_bAnim = false;
-    m_iSjump = 0;
-    m_iMovedLength = 0;
-    m_iScore = 0;
-    m_iLife = 4;
 }
 
 void Character::Init(int x, int y)

@@ -1,20 +1,8 @@
 #include "Map.h"
 
 
-Map::Map()
+Map::Map() : m_imoveLen(0), m_ix(0), m_ix2(0), m_iMaxMapDraw(0), m_iBonusScore(10000), m_iScore(0), m_fTime(0), m_bAnim(false), m_bIsGoal(false)
 {
-	m_imoveLen = 0;
-	m_ix = 0;
-	m_eMapState = BACKGROUND_TRACK;
-	m_bControl = true;
-	m_iMaxMapDraw = 0;
-	m_ix2 = 0;
-	m_iBonusScore = 10000;
-	m_iScore = 0;
-	iCur = 0;
-	m_fTime = 0;
-	m_bAnim = false;
-	m_bIsGoal = false;
 	MeterCreate();
 }
 
@@ -47,7 +35,6 @@ void Map::Update(float deltaTime, int MovedLen, int Life, int iBonusScore, int p
 			m_bAnim = false;
 	}
 
-	m_iPlayerMovedLen = MovedLen;
 	m_iBonusScore = iBonusScore;
 	m_iScore = pScore;
 	m_iLife = pLife;
@@ -74,38 +61,17 @@ void Map::MapDraw(HDC hdc)
 		m_pBitMap[BACKGROUND_LIFE]->Draw(hdc, 850 + i * 15, 50);
 	}
 
-	m_pBitMap[BACKGROUND_METER]->Draw(hdc, m_ix, 350);
-	m_pBitMap[BACKGROUND_METER]->Draw(hdc, m_ix2, 350);
-
 	for (int i = 0; i < MeterList.size(); i++)
 	{
 			stmp = std::to_string(MeterList[i]);
-			TextOutA(hdc, 10 + 66 * i - m_imoveLen, 355, stmp.c_str(), strlen(stmp.c_str()));
+			m_pBitMap[BACKGROUND_METER]->Draw(hdc, 10 + 1070 * i - m_imoveLen, 350);
+			TextOutA(hdc, 30 + 1070 * i - m_imoveLen, 355, stmp.c_str(), strlen(stmp.c_str()));
 	}
-	//for (int i = 1; i < MeterList.size(); i+=2)
-	//{
-	//	stmp = std::to_string(MeterList[i]);
-	//	m_pBitMap[BACKGROUND_METER]->Draw(hdc, m_ix2, 350);
-	//	TextOutA(hdc, m_ix2 + 10 + 66 * 6 *i, 355, stmp.c_str(), strlen(stmp.c_str()));
-	//}
-
+	
 	for (int i = 0; i <= m_iMaxMapDraw; i++)
 	{
 		m_iy = 100;
 		auto x = 66 * i;
-
-		//if (i == 1)
-		//{
-		//	ZeroMemory(buf, sizeof(buf));
-		//	sprintf_s(buf, "%d", m_iMeter);
-		//	m_pBitMap[BACKGROUND_METER]->Draw(hdc, m_ix + x, 350);
-		//	TextOutA(hdc, m_ix + x + 10, 355, buf, strlen(buf));
-
-		//	ZeroMemory(buf, sizeof(buf));
-		//	sprintf_s(buf, "%d", m_iMeter2);
-		//	m_pBitMap[BACKGROUND_METER]->Draw(hdc, m_ix2 + x, 350);
-		//	TextOutA(hdc, m_ix2 + x + 10, 355, buf, strlen(buf));
-		//}
 
 		if (i == 7)
 			m_pBitMap[BACKGROUND_BACK1]->Draw(hdc, m_ix + x, m_ix2 + x, m_iy, false);
@@ -121,35 +87,6 @@ void Map::MapDraw(HDC hdc)
 		m_iy = 165;
 		m_pBitMap[BACKGROUND_TRACK]->Draw(hdc, m_ix + x, m_ix2 + x, m_iy, false);
 	}
-
-	//for (int i = 0; 2 > i; i++)
-	//{
-	//	m_ix = icx - m_imoveLen;
-	//	if (m_ix / icx == 7)
-	//		m_pBitMap[BACKGROUND_BACK1]->Draw(hdc, m_ix, m_iy);
-	//	else
-	//		m_pBitMap[BACKGROUND_BACK2]->Draw(hdc, m_ix, m_iy);
-
-
-	//}
-	//m_ix += icx - m_imoveLen;
-	//for (int i = 0; i < (1200 + m_imoveLen) / 65; i++)
-	//{
-	//	m_ix = 65 * i - m_imoveLen;
-	//	if (iCur % 7 == 0)
-	//		m_pBitMap[BACKGROUND_BACK1]->Draw(hdc, m_ix, m_iy);
-	//	else
-	//		m_pBitMap[BACKGROUND_BACK2]->Draw(hdc, m_ix, m_iy);
-	//	iCur++;
-	//}
-	//m_iy = 165;
-
-	//for (int i = 0; i <= m_iMaxMapDraw; i++)
-	//{
-	//	auto x = 67 * i;
-	//	m_pBitMap[BACKGROUND_TRACK]->Draw(hdc, m_ix + x, m_iy, false);
-	//	m_pBitMap[BACKGROUND_TRACK]->Draw(hdc, m_ix2 + x, m_iy, false);
-	//}
 }
 
 void Map::MeterCreate()

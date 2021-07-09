@@ -2,24 +2,13 @@
 
 GameManager* GameManager::m_hThis = NULL;
 
-GameManager::GameManager()
+GameManager::GameManager() : m_Player(new Character), m_BackGround(new Map), m_Menu(new Menu),m_Obstacle(new Obstacle),m_Rank(new Rank),m_ctmp(0), m_CurrSelectState(SELECT_DEFAULT),
+    m_iBonusScore(10000), m_bGameOver(false), m_fTime(0), m_fTime2(0)
 {
-	m_Player = new Character;
-	m_BackGround = new Map;
-    m_Menu = new Menu;
-    m_Obstacle = new Obstacle;
-    m_Rank = new Rank;
-    m_ctmp = 0;
-    m_CurrSelectState = SELECT_DEFAULT;
-    m_iBonusScore = 10000;
-    m_bGameOver = false;
-    m_fTime = 0;
-    m_fTime2 = 0;
 }
 
 void GameManager::Init(HWND hWnd)
 {
-	//BitMapManager::GetInstance()->Init(hWnd);
 	m_Player->Init(50, 285);
     m_BackGround->Init(BACKGROUND_TRACK, 0, 0);
     m_Menu->Init(MENU_SELECT, 0, 0);
@@ -67,11 +56,6 @@ void GameManager::Update(float deltaTime, int iCheck, HWND g_hwnd)
     case SELECT_PLAY2:
     case SELECT_GOAL:
     {
-        //if (m_Obstacle->ColliderCheck(m_Player->GetRect()))
-        //{
-        //    return;
-        //}
-
         int x = m_Player->GetDistx(deltaTime);
         int x_ring = 30 * deltaTime;
 
@@ -102,10 +86,6 @@ void GameManager::Update(float deltaTime, int iCheck, HWND g_hwnd)
                 }
             }
         }
-        //if (m_BackGround->GetMoveLenx() <= 3900)
-        //    m_BackGround->UpdateMoveLenx(x);
-        //else
-        //    m_Player->UpdatePosx(x);
 
         m_Obstacle->Update(deltaTime, m_Player->GetMovedLength());
 
@@ -128,13 +108,6 @@ void GameManager::Update(float deltaTime, int iCheck, HWND g_hwnd)
         m_Player->PlayerUpdate(deltaTime, iCheck);
 
         m_BackGround->Update(deltaTime, m_Player->GetMovedLength(), 0, m_iBonusScore, m_Player->GetScore(), m_Player->GetLife(), m_Obstacle->GetGoalCollider());
-        
-        //m_fTime2 += deltaTime;
-        //if (1.5f <= m_fTime2 && true == m_Obstacle->GetColliderScore())
-        //{
-        //    m_fTime2 = 0;
-        //    m_Player->PlusScore(100);
-        //}
 
         if (m_Obstacle->GetGoalCollider())
         {
@@ -235,24 +208,22 @@ void GameManager::Draw(float deltaTime, HWND hWnd, HDC hdc)
         else
             m_Player->Draw(backDC);
 
-        //m_Player->GetRect();
-        if (true == m_Obstacle->GetColliderCheck())
-        {
-            sprintf_s(buf, "충돌 충돌");
-            TextOutA(backDC, 50, 500, buf, strlen(buf));
-            m_CurrSelectState = SELECT_GAMEOVER;
-        }
-        
         if (true == m_Obstacle->GetGoalCollider())
         {
             m_CurrSelectState = SELECT_GOAL;
             m_BackGround->DrawGoal(backDC);
         }
 
-        sprintf_s(buf, "이동 거리 : %d, 점프 높이 : %d", m_Player->GetMovedLength() , m_Player->GetPosy());
-        TextOutA(backDC, 100, 50, buf, strlen(buf));
+        if (true == m_Obstacle->GetColliderCheck())
+        {
+            sprintf_s(buf, "충돌 충돌");
+            TextOutA(backDC, 50, 500, buf, strlen(buf));
+            m_CurrSelectState = SELECT_GAMEOVER;
+        }
 
-    
+        // for debugging
+/*sprintf_s(buf, "이동 거리 : %d, 점프 높이 : %d", m_Player->GetMovedLength() , m_Player->GetPosy());
+  TextOutA(backDC, 100, 50, buf, strlen(buf));*/
         break;
     }
     BitBlt(hdc, 0, 0, windowRect.right - windowRect.left, windowRect.bottom - windowRect.top, backDC, 0, 0, SRCCOPY);
@@ -269,7 +240,7 @@ bool GameManager::FinalLineCheck(int x)
         return false;
     }
 
-    if (m_BackGround->GetMoveLenx() >= 3900)
+    if (m_BackGround->GetMoveLenx() >= 9100)
         return true;
     else
     {

@@ -29,7 +29,6 @@ private:
 	BitMap* m_pBitMap[MOVE_END];
 	float m_fTime;
 	float m_fDeadTime;
-	//int m_iCheckMoveStatus;
 	int m_iMovedLength;
 	int m_ix;
 	int m_iy;
@@ -40,7 +39,6 @@ private:
 	int m_iScore;
 	bool m_bAnim;
 	bool m_bIsJump;
-	bool m_bControl;
 	RECT m_BitMapRect;
 	RECT m_Recttmp;
 
@@ -55,30 +53,6 @@ private:
 	}
 public:
 	Character();
-	inline BitMap* GetPlayerImage(MOVE_STATUS Index)
-	{
-		return m_pBitMap[Index];
-	}
-	void UpdateControlState(bool flag)
-	{
-		m_bControl = flag;
-	}
-	void UpdateCharStatus(MOVE_STATUS State)
-	{
-		m_eCharacterState = State;
-	}
-	bool GetControlState()
-	{
-		return m_bControl;
-	}
-	void UpdateSjump(int dir)
-	{
-		m_iSjump = dir;
-	}
-	int GetSjump()
-	{
-		return m_iSjump;
-	}
 	void UpdatePosx(int x)
 	{
 		m_ix += x;
@@ -96,22 +70,20 @@ public:
 	}
 	void SetPosx(int x)
 	{
+		// 캐릭터가 맵 사이즈내에서 이동 가능하게 제한
 		m_ix = x;
 	}
 	int GetPosx()
 	{
 		return m_ix;
 	}
-	int GetPosy()
-	{
-		return m_iy;
-	}
 	int GetDirection()
 	{
-		return m_eDirection;
+		return (int)m_eDirection;
 	}
 	int GetDistx(float deltaTime)
 	{
+		// 이동 시 x축 계산
 		switch (GetDirection())
 		{
 		case DIRECTION::DIR_LEFT: return -(100 * deltaTime);
@@ -121,6 +93,7 @@ public:
 	}
 	int GetDisty(float deltaTime)
 	{
+		// 점프 할 때 y축 계산
 		return 80 * deltaTime;
 	}
 	void UpdateDirection(DIRECTION dir)

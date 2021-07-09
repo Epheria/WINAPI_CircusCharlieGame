@@ -42,22 +42,6 @@ public:
 	void Init(HWND hWnd);
 	bool FinalLineCheck(int x);
 	HBITMAP CreateDIBSectionRe(HDC hdc, int width, int height);
-	//void DrawPlayer(HWND hWnd, HDC hdc)
-	//{
-	//	m_Player->Draw(hdc, Index);
-	//}
-	Character* GetPlayer()
-	{
-		return m_Player;
-	}
-	Map* GetBackGround()
-	{
-		return m_BackGround;
-	}
-	Menu* GetMenu()
-	{
-		return m_Menu;
-	}
 	GameManager();
 	~GameManager();
 };
