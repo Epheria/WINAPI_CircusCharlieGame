@@ -4,6 +4,7 @@ Menu::Menu()
 {
 	m_fTime = 0;
 	m_cAnim = 0;
+	font = CreateFont(35, 0, 0, 0, 0, 0, 0, 0, HANGEUL_CHARSET, 0, 0, 0, 0, (LPWSTR)"±Ã¼­");
 }
 
 void Menu::Init(MENU Index, int x, int y)
@@ -98,10 +99,16 @@ void Menu::StarInfo(HDC hdc, int index, char i, char k)
 
 void Menu::DrawMenu(HDC hdc)
 {
+	HFONT oldfont = (HFONT)SelectObject(hdc, font);
+
 	m_pBitMap[MENU_TITLE1]->Draw(hdc, 455, 105);
 	m_pBitMap[MENU_SELECT]->Draw(hdc, 400, 200);
 	m_pBitMap[MENU_PLAYER1]->Draw(hdc, 500, 280);
 	m_pBitMap[MENU_PLAYER2]->Draw(hdc, 500, 360);
+	SetTextColor(hdc, RGB(255, 255, 255));
+	SetBkColor(hdc, RGB(0, 0, 0));
+	TextOutA(hdc, 500, 440, "2   R a n k", strlen("2   R a n k"));
+	SelectObject(hdc, oldfont);
 }
 
 void Menu::DrawPoint(HDC hdc, char y)
@@ -111,4 +118,5 @@ void Menu::DrawPoint(HDC hdc, char y)
 
 Menu::~Menu()
 {
+	DeleteObject(font);
 }

@@ -24,6 +24,7 @@ private:
 	int m_iy;
 	float m_fTime;
 	char m_cAnim;
+	HFONT font;
 	void DrawPoint(HDC hdc, char y);
 	void DrawMenu(HDC hdc);
 	void DrawStar(HDC hdc);

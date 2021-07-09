@@ -11,7 +11,8 @@ enum SELRANK
 {
 	SELECT_NEXT,
 	SELECT_PREV,
-	SELECT_EXIT
+	SELECT_EXIT,
+	SELECT_DEFUALT
 };
 
 class Rank
@@ -20,11 +21,12 @@ private:
 	BitMap* m_pBitMap;
 	int m_iMaxPage;
 	char m_ctmp;
-	char m_cCurPageIndex;
+	int m_iCurPageIndex;
 	char m_eCurState;
 	char m_buf[256];
 	float m_fTime;
-	std::vector<char*> RankList;
+	HFONT font;
+	std::vector<std::string> RankList;
 public:
 	Rank();
 	std::string currentDateTime();

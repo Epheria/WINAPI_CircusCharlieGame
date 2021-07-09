@@ -1,12 +1,13 @@
 #include "Rank.h"
 
-Rank::Rank()
+Rank::Rank() : m_eCurState(SELECT_DEFUALT), m_iMaxPage(0)
 {
 	m_iMaxPage = 0;
 	m_ctmp = 0;
-	m_cCurPageIndex = 1;
+	m_iCurPageIndex = 1;
 	m_fTime = 0;
 	ZeroMemory(m_buf, sizeof(m_buf));
+	font = CreateFont(20, 0, 0, 0, 0, 0, 0, 0, HANGEUL_CHARSET, 0, 0, 0, 0, (LPCWSTR)"궁서");
 }
 
 void Rank::Init()
@@ -25,12 +26,13 @@ std::string Rank::currentDateTime()
 
 void Rank::SaveRank(int iTotalScore)
 {
+	RankList.clear();
 	std::ofstream fSave;
 	fSave.open("Rank.txt", std::ios::app);
 	if (fSave.is_open())
 	{
-		fSave << currentDateTime() << " " << iTotalScore << " 점";
 		fSave << std::endl;
+		fSave << currentDateTime() << "    " << iTotalScore << " 점";
 		fSave.close();
 	}
 }
@@ -38,7 +40,6 @@ void Rank::SaveRank(int iTotalScore)
 void Rank::LoadRank()
 {
 	std::ifstream fLoad;
-	char* tmp;
 	std::string line;
 
 	fLoad.open("Rank.txt");
@@ -47,9 +48,7 @@ void Rank::LoadRank()
 		while (!fLoad.eof())
 		{
 			std::getline(fLoad, line);
-			tmp = new char[line.size() + 1];
-			strcpy(tmp, line.c_str());
-			RankList.push_back(tmp);
+			RankList.push_back(line);
 		}
 		fLoad.close();
 	}
@@ -59,7 +58,7 @@ void Rank::LoadRank()
 bool Rank::MenuSelect(float deltaTime)
 {
 	m_fTime += deltaTime;
-	if (1.0f <= m_fTime)
+	if (0.5f <= m_fTime)
 	{
 		m_fTime = 0;
 
@@ -74,7 +73,7 @@ bool Rank::MenuSelect(float deltaTime)
 			if (2 < m_ctmp) m_ctmp = 2;
 		}
 
-		if (GetAsyncKeyState(VK_RETURN))
+		if (GetAsyncKeyState(VK_RETURN) & 0x0001)
 		{
 			m_eCurState = m_ctmp;
 		}
@@ -83,47 +82,69 @@ bool Rank::MenuSelect(float deltaTime)
 	switch (m_eCurState)
 	{
 	case SELECT_NEXT:
-		if (m_iMaxPage < m_cCurPageIndex)
-			m_cCurPageIndex = m_iMaxPage;
+		if (m_iMaxPage <= m_iCurPageIndex)
+			m_iCurPageIndex = m_iMaxPage;
 		else
-			m_cCurPageIndex++;
+			m_iCurPageIndex++;
+		m_eCurState = SELECT_DEFUALT;
 		return false;
 
 	case SELECT_PREV:
-		if (1 > m_cCurPageIndex)
-			m_cCurPageIndex = 1;
+		if (1 >= m_iCurPageIndex)
+			m_iCurPageIndex = 1;
 		else
-			m_cCurPageIndex--;
+			m_iCurPageIndex--;
+		m_eCurState = SELECT_DEFUALT;
 		return false;
 
 	case SELECT_EXIT:
 		m_ctmp = 0;
-		m_cCurPageIndex = 1;
+		m_iCurPageIndex = 1;
+		m_eCurState = 0;
+		RankList.clear();
 		return true;
+
+	case SELECT_DEFUALT:
+		return false;
 	}
+
 }
 
 void Rank::RankDraw(HDC hdc)
 {
 	//int index;
-	int iMax = RankList.size();
+	int index = 1 + (m_iCurPageIndex - 1) * 7;
+	std::string page = "<" + std::to_string(m_iCurPageIndex) + ">";
 
-	for (int i = 0; i < 2; i++)
+	HFONT oldfont = (HFONT)SelectObject(hdc, font);
+	SetTextColor(hdc, RGB(255, 0, 0));
+	SetBkColor(hdc, RGB(0, 0, 0));
+	const int& iMax = RankList.size();
+	TextOutA(hdc, 500, 50, "★☆ R a n k ☆★", strlen("★☆ R a n k ☆★"));
+	SelectObject(hdc, oldfont);
+
+	SetTextColor(hdc, RGB(255, 255, 255));
+	SetBkColor(hdc, RGB(0, 0, 0));
+	for (int i = 0; 7 > i; i++, index++)
 	{
-		TextOutA(hdc, 200, 100 + i * 40, RankList[i], sizeof(RankList[i]));
+		if (index < iMax)
+			TextOutA(hdc, 450, 100 + i * 40, RankList[index].c_str(), strlen(RankList[index].c_str()));
+		else
+			break;
 	}
 
-	TextOutA(hdc, 300, 450, "다음 페이지", sizeof("다음 페이지"));
-	TextOutA(hdc, 300, 530, "이전 페이지", sizeof("이전 페이지"));
-	TextOutA(hdc, 300, 610, "나가기", sizeof("나가기"));
+	TextOutA(hdc, 550, 380, page.c_str(), strlen(page.c_str()));
+	TextOutA(hdc, 580, 380, " 페이지", strlen(" 페이지"));
 
-	m_pBitMap->Draw(hdc, 200, 400 + m_ctmp * 80);
+	TextOutA(hdc, 550, 450, "다음 페이지", strlen("다음 페이지"));
+	TextOutA(hdc, 550, 530, "이전 페이지", strlen("이전 페이지"));
+	TextOutA(hdc, 550, 610, "나가기", strlen("나가기"));
+
+	m_pBitMap->Draw(hdc, 350, 450 + m_ctmp * 80);
 }
 
 Rank::~Rank()
 {
-	for (std::vector<char*>::iterator iter = RankList.begin(); iter != RankList.end(); iter++)
-		delete[] * iter;
-
 	RankList.clear();
+	DeleteObject(font);
 }

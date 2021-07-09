@@ -35,7 +35,7 @@ void GameManager::Update(float deltaTime, int iCheck, HWND g_hwnd)
         m_Menu->Update(deltaTime);
 
         m_fTime2 += deltaTime;
-        if (1.0f <= m_fTime2)
+        if (0.5f <= m_fTime2)
         {
             m_fTime2 = 0;
 
@@ -52,12 +52,12 @@ void GameManager::Update(float deltaTime, int iCheck, HWND g_hwnd)
 
             if (GetAsyncKeyState(VK_RETURN))
             {
+                m_Rank->LoadRank();
                 m_CurrSelectState = m_ctmp;
             }
         }
         break;
     case SELECT_RANK:
-        m_Rank->LoadRank();
         if (m_Rank->MenuSelect(deltaTime))
         {
             m_CurrSelectState = SELECT_DEFAULT;
@@ -143,6 +143,7 @@ void GameManager::Update(float deltaTime, int iCheck, HWND g_hwnd)
             {
                 if (MessageBox(g_hwnd, L"축하합니다! ok를 누르시면 계속진행됩니다.", L"!!게임 승리!!", MB_OK) == IDOK)
                 {
+                    m_iTotalScore = m_BackGround->GetTotalScore();
                     m_Rank->SaveRank(m_iTotalScore);
                     m_fTime = 0;
                     m_CurrSelectState = SELECT_DEFAULT;
@@ -175,6 +176,7 @@ void GameManager::Update(float deltaTime, int iCheck, HWND g_hwnd)
 
         if (m_Player->GetLife() <= 0)
         {
+            m_iTotalScore = m_Player->GetScore();
             m_Rank->SaveRank(m_iTotalScore);
             m_CurrSelectState = SELECT_DEFAULT;
             m_Player->ResetLife();

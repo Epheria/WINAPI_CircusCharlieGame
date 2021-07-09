@@ -58,8 +58,11 @@ void Map::MapDraw(HDC hdc)
 {
 	char buf[256];
 	ZeroMemory(buf, sizeof(buf));
+	std::string stmp;
 
 	m_pBitMap[BACKGROUND_INTERFACE]->Draw(hdc, 200, 20);
+	SetTextColor(hdc, RGB(255, 255, 255));
+	SetBkColor(hdc, RGB(0, 0, 0));
 	sprintf_s(buf, "Score : %d", m_iScore);
 	TextOutA(hdc, 400, 40, buf, strlen(buf));
 	ZeroMemory(buf, sizeof(buf));
@@ -71,16 +74,20 @@ void Map::MapDraw(HDC hdc)
 		m_pBitMap[BACKGROUND_LIFE]->Draw(hdc, 850 + i * 15, 50);
 	}
 
-	for (int i = 0; i < MeterList.size(); i+=2)
+	m_pBitMap[BACKGROUND_METER]->Draw(hdc, m_ix, 350);
+	m_pBitMap[BACKGROUND_METER]->Draw(hdc, m_ix2, 350);
+
+	for (int i = 0; i < MeterList.size(); i++)
 	{
-		m_pBitMap[BACKGROUND_METER]->Draw(hdc, m_ix, 350);
-		//TextOutA(hdc, m_ix +10, 355, MeterList[i], strlen(MeterList[i]));
+			stmp = std::to_string(MeterList[i]);
+			TextOutA(hdc, 10 + 66 * i - m_imoveLen, 355, stmp.c_str(), strlen(stmp.c_str()));
 	}
-	for (int i = 1; i < MeterList.size(); i+=2)
-	{
-		m_pBitMap[BACKGROUND_METER]->Draw(hdc, m_ix2, 350);
-		//TextOutA(hdc, m_ix2 + 10, 355, MeterList[i], strlen(MeterList[i]));
-	}
+	//for (int i = 1; i < MeterList.size(); i+=2)
+	//{
+	//	stmp = std::to_string(MeterList[i]);
+	//	m_pBitMap[BACKGROUND_METER]->Draw(hdc, m_ix2, 350);
+	//	TextOutA(hdc, m_ix2 + 10 + 66 * 6 *i, 355, stmp.c_str(), strlen(stmp.c_str()));
+	//}
 
 	for (int i = 0; i <= m_iMaxMapDraw; i++)
 	{
@@ -173,6 +180,8 @@ void Map::DrawGoal(HDC hdc)
 	ZeroMemory(buf, sizeof(buf));
 
 	m_pBitMap[BACKGROUND_INTERFACE]->Draw(hdc, 200, 20);
+	SetTextColor(hdc, RGB(255, 255, 255));
+	SetBkColor(hdc, RGB(0, 0, 0));
 	sprintf_s(buf, "! ! ½Â ¸® ! !");
 	TextOutA(hdc, 400, 40, buf, strlen(buf));
 	sprintf_s(buf, "TotalScore : %d", iTotalScore);
