@@ -37,6 +37,7 @@ void Character::DrawDie(HDC hdc)
 
 void Character::DrawGoal(HDC hdc)
 {
+    m_iy = 240;
     if (m_bAnim == true)
     {
         m_pBitMap[MOVE_GOAL1]->Draw(hdc, m_ix, m_iy);

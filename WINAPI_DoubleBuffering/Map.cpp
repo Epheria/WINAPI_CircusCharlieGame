@@ -119,9 +119,9 @@ void Map::DrawGoal(HDC hdc)
 	m_pBitMap[BACKGROUND_INTERFACE]->Draw(hdc, 200, 20);
 	SetTextColor(hdc, RGB(255, 255, 255));
 	SetBkColor(hdc, RGB(0, 0, 0));
-	sprintf_s(buf, "! ! ½Â ¸® ! !");
+	sprintf_s(buf, "! ! ½Â ¸® ! !       ");
 	TextOutA(hdc, 400, 40, buf, strlen(buf));
-	sprintf_s(buf, "TotalScore : %d", iTotalScore);
+	sprintf_s(buf, "TotalScore : %d ", iTotalScore);
 	TextOutA(hdc, 700, 40, buf, strlen(buf));
 }
 

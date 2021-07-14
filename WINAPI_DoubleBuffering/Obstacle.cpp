@@ -71,7 +71,7 @@ void Obstacle::RectUpdate(float deltaTime, HDC hdc, int x, Character* Player)
 {
 	if (m_imoveLen >= 9100)
 	{
-		SetRect(m_GoalRect, 1000, 100, 300, 100);
+		SetRect(m_GoalRect, 1000, 100, 280, 110);
 		ColliderGoalCheck(Player);
 		if (m_bIsGoal == true)
 			return;
